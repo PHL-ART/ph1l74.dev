@@ -20,6 +20,10 @@ export const metadata: Metadata = {
     template: '%s | Filat Astakhov',
     default: 'Filat Astakhov',
   },
+  openGraph: {
+    title: "Filat Astakhov",
+    description: 'The official site of frontend developer Filat Astkahov'
+  },
   description: 'The official site of frontend developer Filat Astkahov',
 };
 
