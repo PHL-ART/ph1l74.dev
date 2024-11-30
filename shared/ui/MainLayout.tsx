@@ -1,6 +1,4 @@
-"use client";
-
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { Footer } from "@/shared/ui/Footer";
 import { ContentLayout } from "@/shared/ui/ContentLayout";
 import { WavyBackground } from "@/components/ui/wavy-background";
@@ -8,13 +6,9 @@ import { usePathname } from "next/navigation";
 import { PageNavigation } from "./PageNavigation";
 
 export const MainLayout: FC<MainLayoutProps> = ({ children, header }) => {
-  const pathname = usePathname();
-  const isRoot = pathname === "/";
 
   const className =
     "container mx-auto px-8 flex flex-col w-full grow h-full justify-center z-10";
-
-  console.log(pathname);
 
   return (
     <>
@@ -29,11 +23,7 @@ export const MainLayout: FC<MainLayoutProps> = ({ children, header }) => {
         />
       </div>
       <div className="flex flex-col h-full z-20">
-        {!isRoot && (
-          <header className="z-20 pt-8 flex flex-col justify-center">
-            <PageNavigation />
-          </header>
-        )}
+        {header}
         <main className={className}>
           <ContentLayout>{children}</ContentLayout>
         </main>

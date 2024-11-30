@@ -7,7 +7,8 @@ interface MainLayoutProps extends FuncComponent {
 }
 
 interface MainNavigationLinkProps {
-  title: string;
+  title: React.ReactNode | React.ReactNode[] | string | null;
   href: string;
   description?: string;
+  isActive?: boolean;
 }
