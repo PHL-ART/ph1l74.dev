@@ -1,6 +1,8 @@
 import { Navigation as MainNavigation } from "@/components/main/Navigation";
+import { Title } from "@/components/main/Title";
 
 export default function Home() {
+
   return (
     <div className="flex flex-col gap-40">
       <div className="flex flex-row basis-full items-center gap-10">
@@ -8,8 +10,7 @@ export default function Home() {
           Filat Astakhov
         </div>
         <div className="grow shrink basis-0 text-4xl font-light ">
-          <div>React Typescript</div>
-          <div>Frontend</div>
+          <Title />
           <div>Developer</div>
         </div>
       </div>
