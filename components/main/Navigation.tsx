@@ -10,7 +10,7 @@ const MainNavigationLink: FC<MainNavigationLinkProps> = ({
   return (
     <Link
       href={href}
-      className="flex flex-col p-2 rounded-lg grow shrink scale-95 transition-all duration-200 ease-in-out basis-0 w-0 hover:bg-white/15 gap-4 hover:animate-nav-card-on hover:scale-100  "
+      className="flex flex-col p-2 rounded-lg grow shrink scale-95 transition-all duration-200 ease-in-out basis-0 w-0 gap-4 before:opacity-0 before:scale-90 before:translate-y-8 before:transition-all before:duration-500 before:delay-100 before:block before:absolute hover:before:translate-y-0 before:inset-0 before:bg-white/15 relative before:rounded-md hover:before:opacity-100 hover:before:scale-100 hover:animate-nav-card-on hover:scale-100  "
     >
       <div className="flex flex-row justify-between">
         <div className="text-2xl font-bold">{title}</div>
