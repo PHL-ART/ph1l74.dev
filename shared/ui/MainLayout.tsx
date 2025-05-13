@@ -2,8 +2,6 @@ import { FC } from "react";
 import { Footer } from "@/shared/ui/Footer";
 import { ContentLayout } from "@/shared/ui/ContentLayout";
 import { WavyBackground } from "@/components/ui/wavy-background";
-import { usePathname } from "next/navigation";
-import { PageNavigation } from "./PageNavigation";
 
 export const MainLayout: FC<MainLayoutProps> = ({ children, header }) => {
 

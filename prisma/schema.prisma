@@ -6,9 +6,67 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          Int             @id @default(autoincrement())
+  shortname   String          @unique
+  title       String
+  year        Int
+  description String
+  url         String?
+  images      Image[]         // Связь с моделью Image
+  categories  Category[]      // Связь с рубриками
+  tags        ProjectTag[]    // Связь с тегами через промежуточную таблицу
+
+  @@map("projects")
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String   // URL изображения
+  alt       String?  // Альтернативный текст
+  order     Int      @default(0) // Порядок отображения
+  projectId Int      // Внешний ключ
+  project   Project  @relation(fields: [projectId], references: [id]) // Связь с проектом
+
+  @@map("images")
+}
+
+// Модель для рубрик (дизайн, разработка ПО, менеджмент)
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  projects    Project[] // Связь с проектами
+
+  @@map("categories")
+}
+
+// Модель для тегов (стек технологий)
+model Tag {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String?
+  projects    ProjectTag[] // Связь с проектами через промежуточную таблицу
+
+  @@map("tags")
+}
+
+// Промежуточная таблица для связи многие-ко-многим между Project и Tag
+model ProjectTag {
+  id        Int     @id @default(autoincrement())
+  projectId Int
+  tagId     Int
+  project   Project @relation(fields: [projectId], references: [id])
+  tag       Tag     @relation(fields: [tagId], references: [id])
+
+  @@unique([projectId, tagId])
+  @@map("project_tags")
 }

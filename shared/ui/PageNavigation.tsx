@@ -7,7 +7,7 @@ import { FC } from "react";
 
 const PageNavigationLink: FC<MainNavigationLinkProps> = ({ href, title, isActive }) => {
 
-  const className = "flex flex-col p-1 rounded-xl grow shrink basis-0 w-0 hover:bg-white/15 gap-4";
+  const className = "flex flex-col rounded-xl py-1 grow shrink basis-0 w-0 hover:bg-white/15 gap-4";
   const activeClass = 'bg-white/25';
 
   return (
@@ -49,7 +49,7 @@ export const PageNavigation: FC<{}> = () => {
 
   return isRoot ? null : (
     <header className="z-20 pt-8 flex flex-col justify-center">
-      <div className="border-2 border-slate-200 rounded-2xl p-1 flex flex-row w-8/12 self-center xl:w-6/12 2xl:w-4/12 relative">
+      <div className="border-2 border-slate-200 rounded-2xl p-1 flex flex-row gap-1 w-8/12 self-center xl:w-6/12 2xl:w-4/12 relative">
         {links.map((link, index) => {
           const isActive = pathname === link.href;
           return (
