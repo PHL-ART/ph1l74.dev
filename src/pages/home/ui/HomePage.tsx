@@ -1,5 +1,6 @@
 import { Navigation } from '@/src/widgets/navigation/ui/Navigation';
 import { Title } from '@/src/widgets/title/ui/Title';
+import { TestComponent } from '@/src/shared/ui/TestComponent';
 
 export const HomePage = () => {
   return (
@@ -14,6 +15,7 @@ export const HomePage = () => {
         </div>
       </div>
       <Navigation />
+      <TestComponent />
     </div>
   );
 };
