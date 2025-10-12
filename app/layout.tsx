@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { MainLayout } from "@/shared/ui/MainLayout";
 import { PageNavigation } from "@/shared/ui/PageNavigation";
+import { ErrorProvider } from "@/contexts/error-context";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,7 +39,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen max-h-screen w-screen overflow-hidden`}
       >
-        <MainLayout header={<PageNavigation />}>{children}</MainLayout>
+        <ErrorProvider>
+          <MainLayout header={<PageNavigation />}>{children}</MainLayout>
+        </ErrorProvider>
       </body>
     </html>
   );
