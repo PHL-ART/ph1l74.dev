@@ -2,6 +2,7 @@
 
 const nextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ['@prisma/client'],
   images: {
     remotePatterns: [
       {
@@ -17,7 +18,13 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-    // domains: ["api.microlink.io"],
+  },
+  // Оптимизация для App Router
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
   },
 };
 

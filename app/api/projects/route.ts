@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { projectService } from '@/shared/api/database/projectService';
+import { projectService } from '@/src/entities/project/api/projectService';
 
 /**
  * GET /api/projects
