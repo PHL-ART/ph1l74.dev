@@ -1,10 +1,9 @@
-import { Navigation } from '@/src/widgets/navigation/ui/Navigation';
+import { MainPageNavigation } from '@/src/widgets/navigation/ui/MainPageNavigation';
 import { Title } from '@/src/widgets/title/ui/Title';
-import { TestComponent } from '@/src/shared/ui/TestComponent';
 
 export const HomePage = () => {
   return (
-    <div className="flex flex-col gap-40">
+    <div className="flex flex-col gap-40 h-full">
       <div className="flex flex-row basis-full items-center gap-10">
         <div className="grow shrink basis-0 flex justify-center font-bold text-6xl">
           Filat Astakhov
@@ -14,8 +13,7 @@ export const HomePage = () => {
           <div>Developer</div>
         </div>
       </div>
-      <Navigation />
-      <TestComponent />
+      <MainPageNavigation />
     </div>
   );
 };

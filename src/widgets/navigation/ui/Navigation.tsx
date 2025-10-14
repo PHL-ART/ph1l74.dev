@@ -20,8 +20,8 @@ export const Navigation = () => {
           <li key={item.href}>
             <Link
               href={item.href}
-              className={`text-lg font-medium transition-colors hover:text-blue-400 ${
-                pathname === item.href ? 'text-blue-400' : 'text-white'
+              className={`text-lg font-medium transition-colors hover:text-red-800 ${
+                pathname === item.href ? 'text-red-800' : 'text-white'
               }`}
             >
               {item.label}

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { MainLayout } from "@/src/shared/ui/MainLayout";
-import { PageNavigation } from "@/src/shared/ui/PageNavigation";
-import { ErrorProvider } from "@/src/shared/lib/error-context";
+// import { ErrorProvider } from "@/src/shared/lib/error-context";
 
 export const metadata: Metadata = {
   title: {
@@ -27,9 +26,9 @@ export default function RootLayout({
       <body
         className="antialiased h-screen max-h-screen w-screen overflow-hidden"
       >
-        <ErrorProvider>
-          <MainLayout header={<PageNavigation />}>{children}</MainLayout>
-        </ErrorProvider>
+        {/* <ErrorProvider> */}
+          <MainLayout>{children}</MainLayout>
+        {/* </ErrorProvider> */}
       </body>
     </html>
   );

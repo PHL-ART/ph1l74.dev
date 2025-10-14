@@ -5,7 +5,7 @@ module.exports = {
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
-    "./pages/**/*.{ts,tsx}",
+    "./src/pages/**/*.{ts,tsx}",
     "./shared/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
