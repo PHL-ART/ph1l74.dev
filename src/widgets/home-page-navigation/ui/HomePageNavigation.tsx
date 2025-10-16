@@ -1,8 +1,7 @@
 'use client';
 
-import { IconHome } from "@tabler/icons-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { IconArrowRight } from "@tabler/icons-react";
 import { FC } from "react";
 
 interface HomePageNavigationLinkProps {
@@ -12,30 +11,32 @@ interface HomePageNavigationLinkProps {
   isActive?: boolean;
 }
 
-const HomePageNavigationLink: FC<HomePageNavigationLinkProps> = ({ href, title, isActive }) => {
-  const className = "flex flex-col rounded-xl py-1 grow shrink basis-0 w-0 hover:bg-white/15 gap-4";
-  const activeClass = 'bg-white/25';
-
+const HomePageNavigationLink: FC<HomePageNavigationLinkProps> = ({
+  href,
+  title,
+  description,
+}) => {
   return (
     <Link
       href={href}
-      className={!isActive ? className : `${className}  ${activeClass}`}
+      className="flex flex-col p-2 rounded-lg grow shrink scale-95 transition-all duration-200 ease-in-out basis-0 w-0 gap-4 before:opacity-0 before:scale-90 before:translate-y-8 before:transition-all before:duration-500 before:delay-100 before:block before:absolute hover:before:translate-y-0 before:inset-0 before:bg-white/15 relative before:rounded-md hover:before:opacity-100 hover:before:scale-100 hover:animate-nav-card-on hover:scale-100  "
     >
-      <div className="flex flex-row w-full justify-center text-xl font-semibold text-center">
-        {title}
+      <div className="flex flex-row justify-between">
+        <div className="text-2xl font-bold">{title}</div>
+        <IconArrowRight size={32} />
       </div>
+      <div className="">{description}</div>
     </Link>
   );
 };
 
 export const HomePageNavigation: FC<{}> = () => {
-  const pathname = usePathname();
-
   const links: HomePageNavigationLinkProps[] = [
     {
       title: "Projects",
       href: "/projects",
-      description: "All sort of my projects: work projects, open source contirbution, pet projects.",
+      description:
+        "All sort of my projects: work projects, open source contirbution, pet projects.",
     },
     {
       title: "About",
@@ -50,27 +51,17 @@ export const HomePageNavigation: FC<{}> = () => {
   ];
 
   return (
-    <div className="z-20 pt-8 flex flex-col justify-center">
-      <div className="border-2 border-slate-200 rounded-2xl p-1 flex flex-row gap-1 w-8/12 self-center xl:w-6/12 2xl:w-4/12 relative">
-        {links.map((link, index) => {
-          const isActive = pathname === link.href;
-          return (
-            <HomePageNavigationLink
-              key={`main_nav_${link.href.replace("/", "")}_${index}`}
-              href={link.href}
-              title={link.title}
-              description={link.description}
-              isActive={isActive}
-            />
-          );
-        })}
-        <Link
-          href={'/'}
-          className="absolute -left-12 top-2"
-        >
-          <IconHome />
-        </Link>
-      </div>
+    <div className="border-2 border-slate-200 rounded-lg p-2 flex flex-row w-full self-center">
+      {links.map((link, index) => {
+        return (
+          <HomePageNavigationLink
+            key={`main_nav_${link.href.replace("/", "")}_${index}`}
+            href={link.href}
+            title={link.title}
+            description={link.description}
+          />
+        );
+      })}
     </div>
   );
 };

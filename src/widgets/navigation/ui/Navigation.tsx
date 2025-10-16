@@ -13,46 +13,58 @@ interface NavigationLinkProps {
 }
 
 const NavigationLink: FC<NavigationLinkProps> = ({ href, title, isActive }) => {
-  const className = "flex flex-col rounded-xl py-1 grow shrink basis-0 w-0 hover:bg-white/15 gap-4";
-  const activeClass = 'bg-white/25';
+  const className = "text-lg font-medium transition-colors px-4 py-2 hover:text-red-800";
+  const activeClass = isActive ? 'text-red-800' : 'text-white';
+
 
   return (
-    <Link
-      href={href}
-      className={!isActive ? className : `${className}  ${activeClass}`}
-    >
-      <div className="flex flex-row w-full justify-center text-xl font-semibold text-center">
+    <li>
+      <Link
+        href={href}
+        className={`${className} ${activeClass}`}
+      >
         {title}
-      </div>
-    </Link>
+      </Link>
+    </li>
   );
 };
 
 export const Navigation: FC<{}> = () => {
   const pathname = usePathname();
 
-  const links: NavigationLinkProps[] = [
+  const navItems: NavigationLinkProps[] = [
     {
       title: "Projects",
       href: "/projects",
-      description: "All sort of my projects: work projects, open source contirbution, pet projects.",
     },
     {
       title: "About",
       href: "/about",
-      description: "Few information about me: education, career, etc.",
     },
     {
       title: "Contacts",
       href: "/contacts",
-      description: "Different ways to connect with me.",
     },
   ];
 
+  if (pathname === '/') {
+    return null;
+  }
+
   return (
-    <div className="z-20 pt-8 flex flex-col justify-center">
-      <div className="border-2 border-slate-200 rounded-2xl p-1 flex flex-row gap-1 w-8/12 self-center xl:w-6/12 2xl:w-4/12 relative">
-        {links.map((link, index) => {
+
+    <nav className="w-full flex justify-center items-center">
+      <ul className="flex gap-2 border-2 border-slate-200 rounded-2xl p-1 flex-row gap-1self-center text-white">
+        <li>
+
+          <Link
+            href={'/'}
+            className="text-lg px-2 font-medium transition-colors"
+          >
+            <IconHome />
+          </Link>
+        </li>
+        {navItems.map((link, index) => {
           const isActive = pathname === link.href;
           return (
             <NavigationLink
@@ -64,13 +76,8 @@ export const Navigation: FC<{}> = () => {
             />
           );
         })}
-        <Link
-          href={'/'}
-          className="absolute -left-12 top-2"
-        >
-          <IconHome />
-        </Link>
-      </div>
-    </div>
+
+      </ul>
+    </nav>
   );
 };
