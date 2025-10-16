@@ -1,4 +1,4 @@
-import { ProjectList } from '@/src/features/project-list/ui/ProjectList';
+import { ProjectList } from '@/features/project-list/ui/ProjectList';
 
 export const ProjectsPage = () => {
   return (

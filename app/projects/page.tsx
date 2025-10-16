@@ -1,4 +1,4 @@
-import { ProjectsPage } from "@/src/pages/projects/ui/ProjectsPage";
+import { ProjectsPage } from "@/app-pages/projects/ui/ProjectsPage";
 
 export default function Projects() {
   return <ProjectsPage />;

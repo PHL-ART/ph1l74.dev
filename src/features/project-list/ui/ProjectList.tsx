@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from 'next/link';
-import { useErrorHandler } from '@/src/shared/lib/error-context';
-import { ErrorMessage } from '@/src/shared/ui/ErrorMessage';
+import { useErrorHandler } from '@/shared/lib/error-context';
+import { ErrorMessage } from '@/shared/ui/ErrorMessage';
 
 interface Project {
   id: number;

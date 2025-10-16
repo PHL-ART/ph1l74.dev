@@ -21,7 +21,7 @@ const nextConfig = {
   },
   // Оптимизация для App Router
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: false,

@@ -1,34 +1,76 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { IconHome } from "@tabler/icons-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { FC } from "react";
 
-export const Navigation = () => {
+interface NavigationLinkProps {
+  title: React.ReactNode | React.ReactNode[] | string | null;
+  href: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+const NavigationLink: FC<NavigationLinkProps> = ({ href, title, isActive }) => {
+  const className = "flex flex-col rounded-xl py-1 grow shrink basis-0 w-0 hover:bg-white/15 gap-4";
+  const activeClass = 'bg-white/25';
+
+  return (
+    <Link
+      href={href}
+      className={!isActive ? className : `${className}  ${activeClass}`}
+    >
+      <div className="flex flex-row w-full justify-center text-xl font-semibold text-center">
+        {title}
+      </div>
+    </Link>
+  );
+};
+
+export const Navigation: FC<{}> = () => {
   const pathname = usePathname();
 
-  const navItems = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
-    { href: '/projects', label: 'Projects' },
-    { href: '/contacts', label: 'Contacts' },
+  const links: NavigationLinkProps[] = [
+    {
+      title: "Projects",
+      href: "/projects",
+      description: "All sort of my projects: work projects, open source contirbution, pet projects.",
+    },
+    {
+      title: "About",
+      href: "/about",
+      description: "Few information about me: education, career, etc.",
+    },
+    {
+      title: "Contacts",
+      href: "/contacts",
+      description: "Different ways to connect with me.",
+    },
   ];
 
   return (
-    <nav className="flex justify-center items-center py-4">
-      <ul className="flex space-x-8">
-        {navItems.map((item) => (
-          <li key={item.href}>
-            <Link
-              href={item.href}
-              className={`text-lg font-medium transition-colors hover:text-red-800 ${
-                pathname === item.href ? 'text-red-800' : 'text-white'
-              }`}
-            >
-              {item.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div className="z-20 pt-8 flex flex-col justify-center">
+      <div className="border-2 border-slate-200 rounded-2xl p-1 flex flex-row gap-1 w-8/12 self-center xl:w-6/12 2xl:w-4/12 relative">
+        {links.map((link, index) => {
+          const isActive = pathname === link.href;
+          return (
+            <NavigationLink
+              key={`main_nav_${link.href.replace("/", "")}_${index}`}
+              href={link.href}
+              title={link.title}
+              description={link.description}
+              isActive={isActive}
+            />
+          );
+        })}
+        <Link
+          href={'/'}
+          className="absolute -left-12 top-2"
+        >
+          <IconHome />
+        </Link>
+      </div>
+    </div>
   );
 };

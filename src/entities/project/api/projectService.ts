@@ -1,4 +1,4 @@
-import prisma from '@/src/shared/api/database/prisma';
+import prisma from '@/shared/api/database/prisma';
 import { Project } from '@prisma/client';
 
 export const projectService = {

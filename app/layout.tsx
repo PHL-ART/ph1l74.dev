@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { MainLayout } from "@/src/shared/ui/MainLayout";
-// import { ErrorProvider } from "@/src/shared/lib/error-context";
+import { MainLayout } from "@/shared/ui/MainLayout";
+import { ErrorProvider } from "@/shared/lib/error-context";
 
 export const metadata: Metadata = {
   title: {
@@ -22,13 +22,13 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" style={{ colorScheme: 'dark' }}>
       <body
-        className="antialiased h-screen max-h-screen w-screen overflow-hidden"
+        className="antialiased h-screen max-h-screen w-screen overflow-hidden dark:bg-black dark:text-white"
       >
-        {/* <ErrorProvider> */}
+        <ErrorProvider>
           <MainLayout>{children}</MainLayout>
-        {/* </ErrorProvider> */}
+        </ErrorProvider>
       </body>
     </html>
   );
