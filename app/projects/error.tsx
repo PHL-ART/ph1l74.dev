@@ -1,6 +1,6 @@
 'use client';
 
-import { ErrorMessage } from '@/components/ui/error-message';
+import { ErrorMessage } from '@/shared/ui/ErrorMessage';
 import { useEffect } from 'react';
 
 interface ErrorProps {
@@ -33,10 +33,10 @@ export default function ProjectsError({ error, reset }: ErrorProps) {
           Projects
         </div>
         <div className="grow shrink basis-0">
-          <ErrorMessage 
+          <ErrorMessage
             title={title}
             message={message}
-            retry={reset}
+            onRetry={reset}
           />
         </div>
       </div>

@@ -16,7 +16,7 @@ export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
     <>
       <div className="w-full h-full absolute top-0 -z-0">
         <WavyBackground
-          colors={["#d73f1e", "#a70400", "#f3f3f3", "#e30000"]}
+          colors={["#d73f1e", "#a70400", "#f3f3f3"]}
           speed={"slow"}
           waveWidth={200}
           blur={10}

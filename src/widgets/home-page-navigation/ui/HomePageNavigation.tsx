@@ -51,7 +51,7 @@ export const HomePageNavigation: FC<{}> = () => {
   ];
 
   return (
-    <div className="border-2 border-slate-200 rounded-lg p-2 flex flex-row w-full self-center">
+    <div className="border-2 border-slate-200 rounded-lg p-2 flex flex-row w-full self-center mb-40">
       {links.map((link, index) => {
         return (
           <HomePageNavigationLink
