@@ -1,0 +1,74 @@
+services:
+  ph1l74-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_VERSION: 22-alpine
+    container_name: ph1l74-dev
+    restart: unless-stopped
+
+    # Порт, по которому Next.js-приложение будет доступно напрямую
+    ports:
+      - "3000:3000"
+
+    # Переменные окружения приложения
+    environment:
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+      - PORT=3000
+      - DATABASE_URL=${DATABASE_URL}
+
+    # Ожидание готовности БД перед запуском (при использовании внешней БД/другого compose-файла)
+    depends_on:
+      db:
+        condition: service_healthy
+
+    # Если вы используете Traefik как reverse-proxy, он должен быть
+    # запущен в той же внешней сети `ph1l74-network`
+    networks:
+      - ph1l74-network
+
+    # Лейблы Traefik по образцу из BUILD_REFERENCES.md
+    labels:
+      - "traefik.enable=true"
+
+      # HTTP router
+      - "traefik.http.routers.ph1l74-dev.rule=Host(`dev.ph1l74.com`) || Host(`www.dev.ph1l74.com`)"
+      - "traefik.http.routers.ph1l74-dev.entrypoints=web"
+
+      # HTTPS router
+      - "traefik.http.routers.ph1l74-dev-secure.rule=Host(`dev.ph1l74.com`) || Host(`www.dev.ph1l74.com`)"
+      - "traefik.http.routers.ph1l74-dev-secure.entrypoints=websecure"
+      - "traefik.http.routers.ph1l74-dev-secure.tls=true"
+      - "traefik.http.routers.ph1l74-dev-secure.tls.certresolver=letsencrypt"
+
+      # Редирект HTTP -> HTTPS
+      - "traefik.http.middlewares.ph1l74-dev-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.ph1l74-dev-redirect.redirectscheme.permanent=true"
+      - "traefik.http.routers.ph1l74-dev.middlewares=ph1l74-dev-redirect"
+
+      # Приложение слушает порт 3000
+      - "traefik.http.services.ph1l74-dev.loadbalancer.server.port=3000"
+
+      # Дополнительные security-заголовки
+      - "traefik.http.middlewares.ph1l74-dev-headers.headers.sslredirect=true"
+      - "traefik.http.middlewares.ph1l74-dev-headers.headers.stsSeconds=31536000"
+      - "traefik.http.middlewares.ph1l74-dev-headers.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.ph1l74-dev-headers.headers.stsPreload=true"
+      - "traefik.http.routers.ph1l74-dev-secure.middlewares=ph1l74-dev-headers"
+
+      # Редирект с www на apex-домен
+      - "traefik.http.middlewares.ph1l74-dev-www-redirect.redirectregex.regex=^https://www\\.(.+)"
+      - "traefik.http.middlewares.ph1l74-dev-www-redirect.redirectregex.replacement=https://$$1"
+      - "traefik.http.middlewares.ph1l74-dev-www-redirect.redirectregex.permanent=true"
+
+networks:
+  ph1l74-network:
+    external: true
+    name: ph1l74-network
+
+volumes:
+  pgdata: {}
+
+

@@ -6,7 +6,7 @@ export const HomePage = () => {
   return (
     <div className="flex flex-col gap-40 h-full">
       <HomePageTitle />
-      <HomePageNavigation />
+      {/* <HomePageNavigation /> */}
     </div>
   );
 };
