@@ -19,11 +19,6 @@ services:
       - PORT=3000
       - DATABASE_URL=${DATABASE_URL}
 
-    # Ожидание готовности БД перед запуском (при использовании внешней БД/другого compose-файла)
-    depends_on:
-      db:
-        condition: service_healthy
-
     # Если вы используете Traefik как reverse-proxy, он должен быть
     # запущен в той же внешней сети `ph1l74-network`
     networks:
@@ -67,8 +62,3 @@ networks:
   ph1l74-network:
     external: true
     name: ph1l74-network
-
-volumes:
-  pgdata: {}
-
-
