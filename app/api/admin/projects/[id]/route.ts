@@ -6,6 +6,7 @@ const projectInclude = {
   categories: true,
   tags: { include: { tag: true } },
   images: { orderBy: { order: 'asc' } },
+  links: true,
 };
 
 export async function GET(
@@ -110,6 +111,7 @@ export async function DELETE(
   try {
     await prisma.image.deleteMany({ where: { projectId } });
     await prisma.projectTag.deleteMany({ where: { projectId } });
+    await prisma.projectLink.deleteMany({ where: { projectId } });
     await prisma.project.delete({ where: { id: projectId } });
     return NextResponse.json({ success: true });
   } catch (error) {

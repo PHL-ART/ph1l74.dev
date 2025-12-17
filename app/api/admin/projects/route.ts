@@ -6,6 +6,7 @@ const projectInclude = {
   categories: true,
   tags: { include: { tag: true } },
   images: { orderBy: { order: 'asc' } },
+  links: true,
 };
 
 export async function GET(request: NextRequest) {
@@ -34,6 +35,7 @@ export async function POST(request: NextRequest) {
     categoryIds = [],
     tagIds = [],
     images = [],
+    links = [],
   } = body;
 
   if (!shortname || !title || !description || !year) {
@@ -73,6 +75,15 @@ export async function POST(request: NextRequest) {
                     order: Number(img.order) || 0,
                   }),
                 ),
+              }
+            : undefined,
+        links:
+          links && Array.isArray(links)
+            ? {
+                create: links.map((link: { name: string; href: string }) => ({
+                  name: link.name,
+                  href: link.href,
+                })),
               }
             : undefined,
       },

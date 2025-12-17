@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { projectService } from '@/entities/project/api/projectService';
+import prisma from '@/shared/api/database/prisma';
 
 /**
  * GET /api/projects
@@ -7,7 +7,16 @@ import { projectService } from '@/entities/project/api/projectService';
  */
 export async function GET() {
   try {
-    const projects = await projectService.getAllProjects();
+    const projects = await prisma.project.findMany({
+      orderBy: [{ year: 'desc' }, { id: 'desc' }],
+      include: {
+        categories: true,
+        tags: {
+          include: { tag: true },
+        },
+        links: true,
+      },
+    });
     return NextResponse.json(projects);
   } catch (error) {
     console.error('Ошибка при получении проектов:', error);

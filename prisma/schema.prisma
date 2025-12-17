@@ -24,6 +24,7 @@ model Project {
   images      Image[]         // Связь с моделью Image
   categories  Category[]      // Связь с рубриками
   tags        ProjectTag[]    // Связь с тегами через промежуточную таблицу
+  links       ProjectLink[]   // Связь с ссылками
 
   @@map("projects")
 }
@@ -69,4 +70,15 @@ model ProjectTag {
 
   @@unique([projectId, tagId])
   @@map("project_tags")
+}
+
+// Ссылки проекта
+model ProjectLink {
+  id        Int     @id @default(autoincrement())
+  name      String
+  href      String
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+
+  @@map("links")
 }

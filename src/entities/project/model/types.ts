@@ -8,6 +8,7 @@ export interface Project {
   images?: Image[];
   categories?: Category[];
   tags?: ProjectTag[];
+  links?: ProjectLink[];
 }
 
 export interface Image {
@@ -35,4 +36,11 @@ export interface ProjectTag {
   projectId: number;
   tagId: number;
   tag: Tag;
+}
+
+export interface ProjectLink {
+  id: number;
+  name: string;
+  href: string;
+  projectId: number;
 }

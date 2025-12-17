@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Category, Image, Project, ProjectTag, Tag } from '@prisma/client';
 
-type EntityKey = 'projects' | 'categories' | 'tags' | 'images';
+type EntityKey = 'projects' | 'categories' | 'tags' | 'images' | 'links';
 
 type ProjectWithRelations = Project & {
   categories: Category[];
@@ -12,12 +12,14 @@ type ProjectWithRelations = Project & {
 };
 
 type ImageWithProject = Image & { project: Project };
+type LinkWithProject = { id: number; name: string; href: string; projectId: number; project: Project };
 
 const sidebarItems: { key: EntityKey; label: string }[] = [
   { key: 'projects', label: 'Проекты' },
   { key: 'categories', label: 'Рубрики' },
   { key: 'tags', label: 'Теги' },
   { key: 'images', label: 'Изображения' },
+  { key: 'links', label: 'Ссылки' },
 ];
 
 export default function AdminPage() {
@@ -31,6 +33,7 @@ export default function AdminPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [images, setImages] = useState<ImageWithProject[]>([]);
+  const [links, setLinks] = useState<LinkWithProject[]>([]);
 
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
 
@@ -58,6 +61,13 @@ export default function AdminPage() {
     order: 0,
   });
   const [editingImageId, setEditingImageId] = useState<number | null>(null);
+
+  const [linkForm, setLinkForm] = useState({
+    projectId: 0,
+    name: '',
+    href: '',
+  });
+  const [editingLinkId, setEditingLinkId] = useState<number | null>(null);
 
   const projectSelectOptions = useMemo(
     () =>
@@ -103,8 +113,20 @@ export default function AdminPage() {
     setImages(await res.json());
   };
 
+  const fetchLinks = async () => {
+    const res = await fetch('/api/admin/links', { cache: 'no-store' });
+    if (!res.ok) throw new Error('Не удалось получить ссылки');
+    setLinks(await res.json());
+  };
+
   const reloadAll = async () => {
-    await Promise.all([fetchProjects(), fetchCategories(), fetchTags(), fetchImages()]);
+    await Promise.all([
+      fetchProjects(),
+      fetchCategories(),
+      fetchTags(),
+      fetchImages(),
+      fetchLinks(),
+    ]);
   };
 
   useEffect(() => {
@@ -360,6 +382,53 @@ export default function AdminPage() {
     }
   };
 
+  const resetLinkForm = () => {
+    setLinkForm({ projectId: 0, name: '', href: '' });
+    setEditingLinkId(null);
+  };
+
+  const submitLink = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const method = editingLinkId ? 'PUT' : 'POST';
+      const url = editingLinkId ? `/api/admin/links/${editingLinkId}` : '/api/admin/links';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(linkForm),
+      });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(payload.error || 'Не удалось сохранить ссылку');
+      }
+      await fetchLinks();
+      resetLinkForm();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка сохранения ссылки');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const deleteLink = async (id: number) => {
+    if (!window.confirm('Удалить ссылку?')) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/links/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        throw new Error(payload.error || 'Не удалось удалить ссылку');
+      }
+      await fetchLinks();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка удаления ссылки');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (checkingSession) {
     return (
       <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-8 text-center">
@@ -383,7 +452,7 @@ export default function AdminPage() {
         <label className="flex flex-col gap-2 text-sm">
           <span className="text-neutral-300">Логин</span>
           <input
-            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
             value={loginForm.username}
             onChange={(e) => setLoginForm((s) => ({ ...s, username: e.target.value }))}
             placeholder="admin"
@@ -393,7 +462,7 @@ export default function AdminPage() {
           <span className="text-neutral-300">Пароль</span>
           <input
             type="password"
-            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
             value={loginForm.password}
             onChange={(e) => setLoginForm((s) => ({ ...s, password: e.target.value }))}
             placeholder="••••••"
@@ -401,7 +470,7 @@ export default function AdminPage() {
         </label>
         <button
           type="button"
-          className="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           onClick={handleLogin}
           disabled={busy}
         >
@@ -424,7 +493,7 @@ export default function AdminPage() {
                 onClick={() => setActive(item.key)}
                 className={`rounded-md px-3 py-2 text-left text-sm font-medium transition ${
                   active === item.key
-                    ? 'bg-orange-600 text-white'
+            ? 'bg-[rgb(153,27,27)] text-white'
                     : 'bg-neutral-800 text-neutral-200 hover:bg-neutral-700'
                 }`}
               >
@@ -438,7 +507,7 @@ export default function AdminPage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="mt-2 w-full rounded-md border border-neutral-700 px-3 py-2 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+            className="mt-2 w-full rounded-md border border-neutral-700 px-3 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
           >
             Выйти
           </button>
@@ -523,6 +592,28 @@ export default function AdminPage() {
             busy={busy}
           />
         )}
+
+        {active === 'links' && (
+          <LinksView
+            links={links}
+            projects={projectSelectOptions}
+            form={linkForm}
+            setForm={setLinkForm}
+            onSubmit={submitLink}
+            onDelete={deleteLink}
+            onEdit={(link) => {
+              setEditingLinkId(link.id);
+              setLinkForm({
+                projectId: link.projectId,
+                name: link.name,
+                href: link.href,
+              });
+            }}
+            editingId={editingLinkId}
+            onReset={resetLinkForm}
+            busy={busy}
+          />
+        )}
       </section>
     </div>
   );
@@ -597,7 +688,7 @@ function ProjectsView({
             <label className="grid gap-1 text-sm">
               <span className="text-neutral-300">Короткое имя (slug)</span>
               <input
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
                 value={form.shortname}
                 onChange={(e) => setForm((s) => ({ ...s, shortname: e.target.value }))}
                 placeholder="my-project"
@@ -606,7 +697,7 @@ function ProjectsView({
             <label className="grid gap-1 text-sm">
               <span className="text-neutral-300">Заголовок</span>
               <input
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
                 value={form.title}
                 onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))}
                 placeholder="Новый проект"
@@ -616,7 +707,7 @@ function ProjectsView({
               <span className="text-neutral-300">Год</span>
               <input
                 type="number"
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
                 value={form.year}
                 onChange={(e) =>
                   setForm((s) => ({ ...s, year: Number(e.target.value) || s.year }))
@@ -626,7 +717,7 @@ function ProjectsView({
             <label className="grid gap-1 text-sm">
               <span className="text-neutral-300">Описание</span>
               <textarea
-                className="min-h-[120px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+                className="min-h-[120px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
                 value={form.description}
                 onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
               />
@@ -634,7 +725,7 @@ function ProjectsView({
             <label className="grid gap-1 text-sm">
               <span className="text-neutral-300">URL (опционально)</span>
               <input
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
                 value={form.url}
                 onChange={(e) => setForm((s) => ({ ...s, url: e.target.value }))}
                 placeholder="https://example.com"
@@ -644,7 +735,7 @@ function ProjectsView({
               <span className="text-neutral-300">Рубрики</span>
               <select
                 multiple
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
                 value={form.categoryIds.map(String)}
                 onChange={(e) => {
                   const options = Array.from(e.target.selectedOptions).map((o) =>
@@ -664,7 +755,7 @@ function ProjectsView({
               <span className="text-neutral-300">Теги</span>
               <select
                 multiple
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
                 value={form.tagIds.map(String)}
                 onChange={(e) => {
                   const options = Array.from(e.target.selectedOptions).map((o) =>
@@ -685,7 +776,7 @@ function ProjectsView({
                 type="button"
                 onClick={onSubmit}
                 disabled={busy}
-                className="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {editingId ? 'Сохранить изменения' : 'Создать проект'}
               </button>
@@ -693,7 +784,7 @@ function ProjectsView({
                 <button
                   type="button"
                   onClick={onReset}
-                  className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+                  className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
                 >
                   Отменить
                 </button>
@@ -721,7 +812,7 @@ function ProjectsView({
                   <button
                     type="button"
                     onClick={() => onEdit(project)}
-                    className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+                    className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
                   >
                     Редактировать
                   </button>
@@ -752,7 +843,7 @@ function ProjectsView({
                   {project.tags.map((tag) => (
                     <span
                       key={tag.id}
-                      className="rounded-full bg-orange-600/20 px-2 py-1 text-xs text-orange-200"
+                      className="rounded-full bg-red-800/20 px-2 py-1 text-xs text-red-200"
                     >
                       {tag.tag.name}
                     </span>
@@ -798,7 +889,7 @@ function CategoriesView({
           <label className="grid gap-1 text-sm">
             <span className="text-neutral-300">Название</span>
             <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
               value={form.name}
               onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
             />
@@ -806,7 +897,7 @@ function CategoriesView({
           <label className="grid gap-1 text-sm">
             <span className="text-neutral-300">Описание</span>
             <textarea
-              className="min-h-[80px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+              className="min-h-[80px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
               value={form.description}
               onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
             />
@@ -816,7 +907,7 @@ function CategoriesView({
               type="button"
               onClick={onSubmit}
               disabled={busy}
-              className="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {editingId ? 'Сохранить' : 'Создать'}
             </button>
@@ -824,7 +915,7 @@ function CategoriesView({
               <button
                 type="button"
                 onClick={onReset}
-                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
               >
                 Отменить
               </button>
@@ -852,7 +943,7 @@ function CategoriesView({
               <button
                 type="button"
                 onClick={() => onEdit(category)}
-                className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+                className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
               >
                 Редактировать
               </button>
@@ -901,16 +992,16 @@ function TagsView({
         <div className="mt-3 grid gap-3">
           <label className="grid gap-1 text-sm">
             <span className="text-neutral-300">Название</span>
-            <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+          <input
+            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
               value={form.name}
               onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
             />
           </label>
           <label className="grid gap-1 text-sm">
             <span className="text-neutral-300">Описание</span>
-            <textarea
-              className="min-h-[80px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+          <textarea
+            className="min-h-[80px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
               value={form.description}
               onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
             />
@@ -920,7 +1011,7 @@ function TagsView({
               type="button"
               onClick={onSubmit}
               disabled={busy}
-              className="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {editingId ? 'Сохранить' : 'Создать'}
             </button>
@@ -928,7 +1019,7 @@ function TagsView({
               <button
                 type="button"
                 onClick={onReset}
-                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
               >
                 Отменить
               </button>
@@ -954,7 +1045,7 @@ function TagsView({
               <button
                 type="button"
                 onClick={() => onEdit(tag)}
-                className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+                className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
               >
                 Редактировать
               </button>
@@ -1008,7 +1099,7 @@ function ImagesView({
           <label className="grid gap-1 text-sm">
             <span className="text-neutral-300">Проект</span>
             <select
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
               value={form.projectId}
               onChange={(e) =>
                 setForm((s) => ({ ...s, projectId: Number(e.target.value) }))
@@ -1025,7 +1116,7 @@ function ImagesView({
           <label className="grid gap-1 text-sm">
             <span className="text-neutral-300">URL</span>
             <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
               value={form.url}
               onChange={(e) => setForm((s) => ({ ...s, url: e.target.value }))}
             />
@@ -1033,7 +1124,7 @@ function ImagesView({
           <label className="grid gap-1 text-sm">
             <span className="text-neutral-300">Alt (опционально)</span>
             <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
               value={form.alt}
               onChange={(e) => setForm((s) => ({ ...s, alt: e.target.value }))}
             />
@@ -1042,7 +1133,7 @@ function ImagesView({
             <span className="text-neutral-300">Порядок</span>
             <input
               type="number"
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-orange-500"
+              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
               value={form.order}
               onChange={(e) =>
                 setForm((s) => ({ ...s, order: Number(e.target.value) || 0 }))
@@ -1054,7 +1145,7 @@ function ImagesView({
               type="button"
               onClick={onSubmit}
               disabled={busy || !form.projectId}
-              className="rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {editingId ? 'Сохранить' : 'Добавить'}
             </button>
@@ -1062,7 +1153,7 @@ function ImagesView({
               <button
                 type="button"
                 onClick={onReset}
-                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
               >
                 Отменить
               </button>
@@ -1090,7 +1181,7 @@ function ImagesView({
                 <button
                   type="button"
                   onClick={() => onEdit(img)}
-                  className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-orange-500 hover:text-white"
+                  className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
                 >
                   Редактировать
                 </button>
@@ -1105,6 +1196,130 @@ function ImagesView({
             </div>
             <p className="break-all text-sm text-neutral-200">{img.url}</p>
             {img.alt && <p className="text-sm text-neutral-400">alt: {img.alt}</p>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+type LinksViewProps = {
+  links: LinkWithProject[];
+  projects: { id: number; label: string }[];
+  form: { projectId: number; name: string; href: string };
+  setForm: React.Dispatch<
+    React.SetStateAction<{ projectId: number; name: string; href: string }>
+  >;
+  onSubmit: () => Promise<void>;
+  onDelete: (id: number) => void;
+  onEdit: (link: LinkWithProject) => void;
+  editingId: number | null;
+  onReset: () => void;
+  busy: boolean;
+};
+
+function LinksView({
+  links,
+  projects,
+  form,
+  setForm,
+  onSubmit,
+  onDelete,
+  onEdit,
+  editingId,
+  onReset,
+  busy,
+}: LinksViewProps) {
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
+        <h2 className="text-xl font-semibold">Ссылки</h2>
+        <div className="mt-3 grid gap-3">
+          <label className="grid gap-1 text-sm">
+            <span className="text-neutral-300">Проект</span>
+            <select
+              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+              value={form.projectId}
+              onChange={(e) =>
+                setForm((s) => ({ ...s, projectId: Number(e.target.value) }))
+              }
+            >
+              <option value={0}>Выберите проект</option>
+              {projects.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-neutral-300">Название</span>
+            <input
+              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+              value={form.name}
+              onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
+            />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-neutral-300">Href</span>
+            <input
+              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+              value={form.href}
+              onChange={(e) => setForm((s) => ({ ...s, href: e.target.value }))}
+              placeholder="https://example.com"
+            />
+          </label>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onSubmit}
+              disabled={busy || !form.projectId}
+              className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {editingId ? 'Сохранить' : 'Добавить'}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={onReset}
+                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
+              >
+                Отменить
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3 rounded-lg border border-neutral-800 bg-neutral-900 p-4">
+        {links.length === 0 && <p className="text-sm text-neutral-500">Ссылок пока нет</p>}
+        {links.map((link) => (
+          <div
+            key={link.id}
+            className="flex items-start justify-between gap-3 rounded border border-neutral-800 bg-neutral-950 p-3"
+          >
+            <div>
+              <p className="text-xs uppercase text-neutral-500">#{link.id}</p>
+              <p className="text-base font-semibold text-white">{link.name}</p>
+              <p className="text-sm text-neutral-300 break-all">{link.href}</p>
+              <p className="text-xs text-neutral-500 mt-1">{link.project.title}</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => onEdit(link)}
+                className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
+              >
+                Редактировать
+              </button>
+              <button
+                type="button"
+                onClick={() => onDelete(link.id)}
+                className="rounded-md border border-red-500/70 px-3 py-1 text-sm text-red-200 transition hover:bg-red-500/10"
+              >
+                Удалить
+              </button>
+            </div>
           </div>
         ))}
       </div>
