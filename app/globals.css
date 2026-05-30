@@ -867,6 +867,21 @@ img { max-width: 100%; display: block; }
 .ds-pfn-btn--tag { letter-spacing: 0.12em; font-size: 0.48rem; }
 .ds-pfn-left .ds-pfn-btn { padding-left: 0; }
 
+/* Stretched-link overlay — covers the whole <li> card */
+.ds-project-item-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  outline: none;
+}
+
+.ds-project-item-link:focus-visible {
+  outline: 1.5px solid var(--ds-accent);
+  outline-offset: -1.5px;
+}
+
+/* Card layout — sits above the stretched link so content is readable,
+   but tag buttons (z-index:2) stay clickable over the overlay */
 .ds-project-item {
   display: grid;
   grid-template-columns: 3.5rem 1fr auto;
@@ -875,9 +890,8 @@ img { max-width: 100%; display: block; }
   padding: 2.5rem 0;
   border-bottom: 1px solid var(--ds-border);
   position: relative;
-  cursor: pointer;
+  z-index: 0;
   transition: background 0.28s var(--ds-ease-out), transform 0.28s var(--ds-ease-out);
-  text-decoration: none;
   color: inherit;
 }
 
@@ -892,9 +906,8 @@ img { max-width: 100%; display: block; }
   transition: transform 0.32s var(--ds-ease-out);
 }
 
-.ds-project-item:hover              { background: var(--ds-accent-tint); transform: translateX(0.6rem); }
-.ds-project-item:hover::before      { transform: scaleY(1); }
-.ds-project-item:focus-visible      { outline: 1.5px solid var(--ds-accent); outline-offset: -1.5px; }
+li:has(.ds-project-item-link):hover .ds-project-item              { background: var(--ds-accent-tint); transform: translateX(0.6rem); }
+li:has(.ds-project-item-link):hover .ds-project-item::before      { transform: scaleY(1); }
 
 .ds-project-num {
   grid-column: 1; grid-row: 1;
@@ -907,7 +920,7 @@ img { max-width: 100%; display: block; }
   transition: color 0.2s var(--ds-ease-out);
 }
 
-.ds-project-item:hover .ds-project-num { color: var(--ds-accent); }
+li:has(.ds-project-item-link):hover .ds-project-num { color: var(--ds-accent); }
 
 .ds-project-main  { grid-column: 2; grid-row: 1; }
 
@@ -935,7 +948,7 @@ img { max-width: 100%; display: block; }
   align-self: start;
 }
 
-.ds-project-item:hover .ds-project-arrow {
+li:has(.ds-project-item-link):hover .ds-project-arrow {
   transform: translate(3px, -3px);
   color: var(--ds-accent);
 }

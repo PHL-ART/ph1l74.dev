@@ -117,11 +117,15 @@ export const ProjectsPage = () => {
       {!loading && !error && filteredProjects.length > 0 && (
         <ul className="ds-projects-list" role="list">
           {filteredProjects.map((p, i) => (
-            <li key={p.id}>
+            <li key={p.id} style={{ position: 'relative' }}>
+              {/* Stretched link covers the entire card; sits behind interactive children */}
               <Link
                 href={`/projects/${p.shortname}`}
-                className="ds-project-item"
-              >
+                className="ds-project-item-link"
+                aria-label={p.title}
+                tabIndex={0}
+              />
+              <div className="ds-project-item">
                 <div className="ds-project-num">
                   {String(i + 1).padStart(2, '0')}
                 </div>
@@ -147,14 +151,12 @@ export const ProjectsPage = () => {
                   <div className="ds-project-tags-cell">
                     <div className="ds-project-tags">
                       {p.tags.map((t) => (
-                        // button + stopPropagation prevents the outer <Link> from firing
                         <button
                           key={t.tagId}
                           className="ds-tag"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            router.push(buildFilterUrl(activeCategory, t.tag.name));
+                          style={{ position: 'relative', zIndex: 2 }}
+                          onClick={() => {
+                            router.replace(buildFilterUrl(activeCategory, t.tag.name));
                           }}
                         >
                           {t.tag.name}
@@ -165,7 +167,7 @@ export const ProjectsPage = () => {
                 )}
 
                 <div className="ds-project-arrow" aria-hidden="true">↗</div>
-              </Link>
+              </div>
             </li>
           ))}
         </ul>

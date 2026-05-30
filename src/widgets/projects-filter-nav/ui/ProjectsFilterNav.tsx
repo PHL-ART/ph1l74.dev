@@ -24,7 +24,7 @@ export const ProjectsFilterNav = ({
         {/* "All" clears category filter; preserves active tag */}
         <button
           className={`ds-pfn-btn${activeCategory === null ? ' ds-pfn-btn--active' : ''}`}
-          onClick={() => router.push(buildFilterUrl(null, activeTag))}
+          onClick={() => router.replace(buildFilterUrl(null, activeTag))}
           aria-pressed={activeCategory === null}
         >
           All
@@ -35,7 +35,7 @@ export const ProjectsFilterNav = ({
             className={`ds-pfn-btn${activeCategory === cat ? ' ds-pfn-btn--active' : ''}`}
             // Toggle: clicking the active category deselects it; preserves active tag
             onClick={() =>
-              router.push(buildFilterUrl(activeCategory === cat ? null : cat, activeTag))
+              router.replace(buildFilterUrl(activeCategory === cat ? null : cat, activeTag))
             }
             aria-pressed={activeCategory === cat}
           >
@@ -49,10 +49,11 @@ export const ProjectsFilterNav = ({
         {activeTag && (
           <button
             className="ds-pfn-btn ds-pfn-btn--tag-badge"
-            onClick={() => router.push(buildFilterUrl(activeCategory, null))}
+            onClick={() => router.replace(buildFilterUrl(activeCategory, null))}
             title="Clear tag filter"
+            aria-label={`Clear tag filter: ${activeTag}`}
           >
-            {activeTag} ×
+            {activeTag}{' '}×
           </button>
         )}
         <Link href="/tags" className="ds-pfn-btn ds-pfn-btn--tags-link">
