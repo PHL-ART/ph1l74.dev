@@ -1,15 +1,59 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+
+type Tag = { id: number; name: string };
+
 export default function TagsPage() {
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/tags')
+      .then((r) => r.json())
+      .then((data: Tag[]) => setTags(data))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
-    <main style={{ padding: 'calc(var(--ds-header-h) + 4rem) var(--ds-px) 4rem' }}>
-      <p style={{
-        fontFamily: 'var(--font-jetbrains-mono, monospace)',
-        fontSize: '0.65rem',
-        letterSpacing: '0.18em',
-        textTransform: 'uppercase',
-        color: 'var(--ds-text-2)',
-      }}>
-        Coming soon
-      </p>
+    <main className="ds-projects-wrap">
+      <div className="ds-page-header">
+        <h1 className="ds-page-title" data-num="02 / Tags">Tags</h1>
+        <div className="ds-page-header-meta">
+          <div>All tags</div>
+          <div>{tags.length} total</div>
+        </div>
+      </div>
+
+      {loading && (
+        <div className="flex min-h-[200px] items-center justify-center gap-3"
+          style={{ color: 'var(--ds-text-2)' }}>
+          <span className="h-4 w-4 animate-spin rounded-full border border-t-transparent"
+            style={{ borderColor: 'var(--ds-accent)', borderTopColor: 'transparent' }} />
+          Loading...
+        </div>
+      )}
+
+      {!loading && tags.length === 0 && (
+        <p className="py-16" style={{ color: 'var(--ds-text-2)', fontFamily: 'var(--font-jetbrains-mono)', fontSize: '0.75rem', letterSpacing: '0.1em' }}>
+          No tags yet.
+        </p>
+      )}
+
+      {!loading && tags.length > 0 && (
+        <div className="ds-tags-cloud">
+          {tags.map((tag) => (
+            <Link
+              key={tag.id}
+              href={`/projects?tag=${encodeURIComponent(tag.name)}`}
+              className="ds-tag"
+            >
+              {tag.name}
+            </Link>
+          ))}
+        </div>
+      )}
     </main>
   );
 }
