@@ -832,12 +832,6 @@ img { max-width: 100%; display: block; }
   text-decoration: none;
 }
 
-.ds-pfn-btn--tag-badge {
-  color: var(--ds-accent);
-  border-left: 1px solid var(--ds-border);
-  border-right: 1px solid var(--ds-border);
-}
-
 .ds-pfn-btn {
   all: unset;
   display: inline-flex;
@@ -868,6 +862,11 @@ img { max-width: 100%; display: block; }
 .ds-pfn-btn--active { color: var(--ds-accent); }
 .ds-pfn-btn--active::after { right: 0; }
 .ds-pfn-btn--tag { letter-spacing: 0.12em; font-size: 0.48rem; }
+.ds-pfn-btn--tag-badge {
+  color: var(--ds-accent);
+  border-left: 1px solid var(--ds-border);
+  border-right: 1px solid var(--ds-border);
+}
 .ds-pfn-left .ds-pfn-btn { padding-left: 0; }
 
 /* Stretched-link overlay — covers the whole <li> card */
