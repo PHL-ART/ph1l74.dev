@@ -514,6 +514,8 @@ img { max-width: 100%; display: block; }
   white-space: nowrap;
   transition: border-color 0.2s var(--ds-ease-out), color 0.2s var(--ds-ease-out);
   cursor: pointer;
+  position: relative;
+  z-index: 2;
 }
 
 .ds-tag:hover {
@@ -788,6 +790,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-projects-list { list-style: none; }
+.ds-projects-list > li { position: relative; }
 
 /* ─── Projects Filter Nav ─────────────────────────────────── */
 .ds-projects-filter-nav {

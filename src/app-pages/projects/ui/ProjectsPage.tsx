@@ -117,13 +117,12 @@ export const ProjectsPage = () => {
       {!loading && !error && filteredProjects.length > 0 && (
         <ul className="ds-projects-list" role="list">
           {filteredProjects.map((p, i) => (
-            <li key={p.id} style={{ position: 'relative' }}>
+            <li key={p.id}>
               {/* Stretched link covers the entire card; sits behind interactive children */}
               <Link
                 href={`/projects/${p.shortname}`}
                 className="ds-project-item-link"
                 aria-label={p.title}
-                tabIndex={0}
               />
               <div className="ds-project-item">
                 <div className="ds-project-num">
@@ -154,7 +153,6 @@ export const ProjectsPage = () => {
                         <button
                           key={t.tagId}
                           className="ds-tag"
-                          style={{ position: 'relative', zIndex: 2 }}
                           onClick={() => {
                             router.replace(buildFilterUrl(activeCategory, t.tag.name));
                           }}
