@@ -44,3 +44,7 @@ CLAUDE.md
 .claude/
 .agents/
 MEMORY.md
+
+.superpowers/
+docs/superpowers/*
+.superpowers/
