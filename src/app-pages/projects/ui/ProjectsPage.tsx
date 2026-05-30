@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
 import { ProjectsFilterNav } from '@/widgets/projects-filter-nav';
+import { buildFilterUrl } from '@/shared/lib/filter-url';
 
 type ProjectItem = {
   id: number;
@@ -17,10 +19,16 @@ type ProjectItem = {
 };
 
 export const ProjectsPage = () => {
+  const router = useRouter();
+
+  // URL is the single source of truth for active filters
+  const searchParams = useSearchParams();
+  const activeCategory = searchParams.get('category');
+  const activeTag = searchParams.get('tag');
+
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const loadProjects = async () => {
     try {
@@ -48,12 +56,18 @@ export const ProjectsPage = () => {
     return Array.from(seen).sort();
   }, [projects]);
 
+  // AND-logic: project must satisfy both active category AND active tag (if set)
   const filteredProjects = useMemo(() => {
-    return projects.filter((p) =>
-      activeCategory === null ||
-      p.categories?.some((c) => c.name === activeCategory) === true
-    );
-  }, [projects, activeCategory]);
+    return projects.filter((p) => {
+      const categoryMatch =
+        activeCategory === null ||
+        p.categories?.some((c) => c.name === activeCategory) === true;
+      const tagMatch =
+        activeTag === null ||
+        p.tags?.some((t) => t.tag.name === activeTag) === true;
+      return categoryMatch && tagMatch;
+    });
+  }, [projects, activeCategory, activeTag]);
 
   const showFilterNav = !loading && !error && projects.length > 0;
 
@@ -71,7 +85,7 @@ export const ProjectsPage = () => {
         <ProjectsFilterNav
           categories={allCategories}
           activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
+          activeTag={activeTag}
         />
       )}
 
@@ -133,7 +147,18 @@ export const ProjectsPage = () => {
                   <div className="ds-project-tags-cell">
                     <div className="ds-project-tags">
                       {p.tags.map((t) => (
-                        <span key={t.tagId} className="ds-tag">{t.tag.name}</span>
+                        // button + stopPropagation prevents the outer <Link> from firing
+                        <button
+                          key={t.tagId}
+                          className="ds-tag"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            router.push(buildFilterUrl(activeCategory, t.tag.name));
+                          }}
+                        >
+                          {t.tag.name}
+                        </button>
                       ))}
                     </div>
                   </div>
