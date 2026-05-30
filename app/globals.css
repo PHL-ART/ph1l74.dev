@@ -517,8 +517,15 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-tag:hover {
-  border-color: var(--ds-border-hover);
-  color: var(--ds-text);
+  border-color: var(--ds-accent);
+  color: var(--ds-accent);
+}
+
+.ds-tags-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 2.5rem 0 4rem;
 }
 
 /* ─── About Page ──────────────────────────────────────────── */
@@ -729,6 +736,14 @@ img { max-width: 100%; display: block; }
   flex: 1;
 }
 
+/* Compensates ds-projects-wrap padding so the header border spans full viewport width */
+.ds-projects-wrap .ds-page-header {
+  margin-left: calc(var(--ds-px) * -1);
+  margin-right: calc(var(--ds-px) * -1);
+  padding-left: var(--ds-px);
+  padding-right: var(--ds-px);
+}
+
 .ds-page-header {
   padding: 4rem 0 2.75rem;
   border-bottom: 1px solid var(--ds-border);
@@ -812,6 +827,12 @@ img { max-width: 100%; display: block; }
 
 .ds-pfn-btn--tags-link {
   text-decoration: none;
+}
+
+.ds-pfn-btn--tag-badge {
+  color: var(--ds-accent);
+  border-left: 1px solid var(--ds-border);
+  border-right: 1px solid var(--ds-border);
 }
 
 .ds-pfn-btn {
@@ -1448,6 +1469,17 @@ img { max-width: 100%; display: block; }
   font-size: 0.88rem;
   font-weight: 500;
   color: var(--ds-text);
+}
+
+.ds-sidebar-cat-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s var(--ds-ease-out);
+}
+
+.ds-sidebar-cat-link:hover {
+  color: var(--ds-accent);
+  text-decoration: underline;
 }
 
 @media (max-width: 1024px) {
