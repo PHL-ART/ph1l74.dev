@@ -82,3 +82,14 @@ model ProjectLink {
 
   @@map("links")
 }
+
+// Контакты сайта (email, telegram, телефон и т.д.)
+model Contact {
+  id    Int    @id @default(autoincrement())
+  kind  String // email, phone, telegram, link
+  label String
+  value String
+  order Int    @default(0)
+
+  @@map("contacts")
+}

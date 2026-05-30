@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { CardHoverEffect } from '@/shared/ui/CardHoverEffect';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
 
 type ProjectItem = {
@@ -25,69 +25,93 @@ export const ProjectsPage = () => {
       setLoading(true);
       setError(null);
       const res = await fetch('/api/projects', { cache: 'no-store' });
-      if (!res.ok) throw new Error('Не удалось загрузить проекты');
+      if (!res.ok) throw new Error('Failed to load projects');
       const data: ProjectItem[] = await res.json();
-      const sorted = [...data].sort((a, b) => b.year - a.year || b.id - a.id);
-      setProjects(sorted);
+      setProjects([...data].sort((a, b) => b.year - a.year || b.id - a.id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка загрузки');
+      setError(err instanceof Error ? err.message : 'Load error');
       setProjects([]);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadProjects();
-  }, []);
-
-  const renderContent = () => {
-    if (loading) {
-      return (
-        <div className="flex min-h-[200px] items-center justify-center gap-3 text-neutral-300">
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[rgb(153,27,27)] border-t-transparent" />
-          Загрузка проектов...
-        </div>
-      );
-    }
-
-    if (error) {
-      return (
-        <ErrorMessage
-          title="Ошибка"
-          message={error}
-          onRetry={loadProjects}
-        />
-      );
-    }
-
-    if (!projects.length) {
-      return (
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-6 text-center text-neutral-300">
-          Пока нет проектов
-        </div>
-      );
-    }
-
-    const items = projects.map((p) => ({
-      title: p.title,
-      description: p.description,
-      href: `/projects/${p.shortname}`,
-      year: p.year.toString(),
-      category: p.categories?.[0]?.name,
-      tags: p.tags?.map((t) => t.tag.name) ?? [],
-    }));
-
-    return <CardHoverEffect items={items} />;
-  };
+  useEffect(() => { loadProjects(); }, []);
 
   return (
-    <div className="flex w-full flex-col gap-7">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-4xl font-bold text-white">Projects</h1>
-        <div className="h-px w-full bg-neutral-800" />
+    <main className="ds-projects-wrap">
+      <div className="ds-page-header">
+        <h1 className="ds-page-title" data-num="01 / Work">Projects</h1>
+        <div className="ds-page-header-meta">
+          <div>Selected work</div>
+          <div>2020 – {new Date().getFullYear()}</div>
+        </div>
       </div>
-      {renderContent()}
-    </div>
+
+      {loading && (
+        <div className="flex min-h-[200px] items-center justify-center gap-3"
+          style={{ color: 'var(--ds-text-2)' }}>
+          <span className="h-4 w-4 animate-spin rounded-full border border-t-transparent"
+            style={{ borderColor: 'var(--ds-accent)', borderTopColor: 'transparent' }} />
+          Loading...
+        </div>
+      )}
+
+      {error && (
+        <ErrorMessage title="Error" message={error} onRetry={loadProjects} />
+      )}
+
+      {!loading && !error && projects.length === 0 && (
+        <p className="py-16" style={{ color: 'var(--ds-text-2)', fontFamily: 'var(--font-jetbrains-mono)', fontSize: '0.75rem', letterSpacing: '0.1em' }}>
+          No projects yet.
+        </p>
+      )}
+
+      {!loading && !error && projects.length > 0 && (
+        <ul className="ds-projects-list" role="list">
+          {projects.map((p, i) => (
+            <li key={p.id}>
+              <Link
+                href={`/projects/${p.shortname}`}
+                className="ds-project-item"
+              >
+                <div className="ds-project-num">
+                  {String(i + 1).padStart(2, '0')}
+                </div>
+
+                <div className="ds-project-main">
+                  <h2 className="ds-project-title">
+                    {p.title}
+                    {p.categories?.[0] && (
+                      <span className="ds-project-category">
+                        {p.categories[0].name}
+                      </span>
+                    )}
+                  </h2>
+                </div>
+
+                <div className="ds-project-year">{p.year}</div>
+
+                <div className="ds-project-desc-cell">
+                  <p className="ds-project-desc">{p.description}</p>
+                </div>
+
+                {p.tags && p.tags.length > 0 && (
+                  <div className="ds-project-tags-cell">
+                    <div className="ds-project-tags">
+                      {p.tags.map((t) => (
+                        <span key={t.tagId} className="ds-tag">{t.tag.name}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="ds-project-arrow" aria-hidden="true">↗</div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
   );
 };

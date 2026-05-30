@@ -439,12 +439,9 @@ export default function AdminPage() {
 
   if (!authenticated) {
     return (
-      <div className="mx-auto flex w-full max-w-xl flex-col gap-6 rounded-xl border border-neutral-800 bg-neutral-900 p-8 shadow-xl">
-        <h1 className="text-2xl font-semibold">Админ-панель</h1>
-        <p className="text-sm text-neutral-400">
-          Введите логин и пароль из переменных окружения ADMIN_USERNAME / ADMIN_PASSWORD.
-        </p>
-        {error && (
+      <div className="fixed inset-0 z-10 flex items-center justify-center">
+        <div className="mx-auto flex w-full max-w-xl flex-col gap-6 rounded-xl border border-neutral-800 bg-neutral-900/85 p-8 shadow-xl backdrop-blur">
+          {error && (
           <div className="rounded border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-200">
             {error}
           </div>
@@ -476,6 +473,7 @@ export default function AdminPage() {
         >
           Войти
         </button>
+        </div>
       </div>
     );
   }

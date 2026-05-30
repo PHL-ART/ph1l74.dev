@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Filat Astakhov</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+
+    /* ─────────────────────────────────────
+       ABOUT PAGE
+    ───────────────────────────────────── */
+
+    .about-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ——— LEFT column (text) ——— */
+    .about-left {
+      padding: 5rem var(--px) 4rem;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .about-eyebrow {
+      margin-bottom: 2.5rem;
+    }
+
+    .about-heading {
+      font-family: var(--f-display);
+      font-weight: 800;
+      font-size: clamp(3.5rem, 8vw, 8rem);
+      letter-spacing: -0.028em;
+      text-transform: uppercase;
+      line-height: 0.86;
+      color: var(--text);
+      margin-bottom: 3rem;
+    }
+
+    /* Outlined second line */
+    .about-heading-ghost {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--text-3);
+    }
+
+    .about-body {
+      font-size: 0.95rem;
+      color: var(--text-2);
+      line-height: 1.85;
+      max-width: 50ch;
+      margin-bottom: 2.75rem;
+    }
+
+    .about-body p + p { margin-top: 1.1rem; }
+    .about-body strong { color: var(--text); font-weight: 600; }
+
+    /* ——— Skills ——— */
+    .about-section-label {
+      font-family: var(--f-mono);
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 0.85rem;
+    }
+
+    .about-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 3rem;
+    }
+
+    .about-skills .tag:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    /* ——— Stats ——— */
+    .about-stats {
+      margin-top: auto;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .stat-num {
+      font-family: var(--f-display);
+      font-weight: 800;
+      font-size: 2.6rem;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-family: var(--f-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-2);
+    }
+
+    /* ——— RIGHT column (photo) ——— */
+    .about-right {
+      position: relative;
+      overflow: hidden;
+      min-height: 580px;
+    }
+
+    .about-photo-wrapper {
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3.5rem calc(var(--px) * 0.85);
+    }
+
+    /* Photo frame with corner brackets */
+    .about-photo-frame {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      aspect-ratio: 3 / 4;
+    }
+
+    .about-photo-frame::before,
+    .about-photo-frame::after {
+      content: '';
+      position: absolute;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-style: solid;
+      border-color: var(--accent);
+    }
+
+    .about-photo-frame::before {
+      top: -0.45rem;
+      left: -0.45rem;
+      border-width: 1px 0 0 1px;
+    }
+
+    .about-photo-frame::after {
+      bottom: -0.45rem;
+      right: -0.45rem;
+      border-width: 0 1px 1px 0;
+    }
+
+
+    /* The photo itself (placeholder) */
+    .about-photo {
+      width: 100%;
+      height: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Diagonal hatching in placeholder */
+    .about-photo-geo {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 70% at 35% 65%, rgba(196,30,30,0.07), transparent 55%),
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 22px,
+          var(--border) 22px,
+          var(--border) 23px
+        );
+    }
+
+    /* Initials placeholder text */
+    .about-photo-initials {
+      font-family: var(--f-display);
+      font-weight: 800;
+      font-size: 7rem;
+      letter-spacing: -0.06em;
+      color: var(--text-3);
+      user-select: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Bottom label */
+    .about-photo-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.85rem 1rem;
+      font-family: var(--f-mono);
+      font-size: 0.5rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      background: rgba(9,9,9,0.65);
+      backdrop-filter: blur(6px);
+      text-align: center;
+      z-index: 2;
+    }
+
+    /* ——— Responsive ——— */
+    @media (max-width: 900px) {
+      .about-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .about-left {
+        border-right: none;
+      }
+
+      .about-right {
+        border-top: 1px solid var(--border);
+        min-height: 480px;
+      }
+
+      .about-photo-wrapper {
+        position: static;
+        height: 480px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .about-stats { grid-template-columns: 1fr 1fr; }
+      .about-left  { padding: 3rem var(--px); }
+    }
+
+    @media (max-width: 480px) {
+      .about-heading { font-size: clamp(3rem, 14vw, 5rem); margin-bottom: 2rem; }
+      .about-right { min-height: 320px; }
+      .about-photo-wrapper { height: 320px; }
+      .about-stats { padding-top: 1.75rem; gap: 1rem; }
+      .stat-num { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="site-logo">ph1l74<span class="dot">.</span>dev</a>
+    <input type="checkbox" id="nav-open" class="nav-toggle">
+    <label for="nav-open" class="nav-toggle-label" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </label>
+    <nav>
+      <ul class="site-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="contacts.html">Contacts</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page">
+    <main class="about-layout">
+
+      <!-- ——— Text content ——— -->
+      <section class="about-left">
+        <div class="about-eyebrow eyebrow">02 / About</div>
+
+        <h1 class="about-heading">
+          About
+          <span class="about-heading-ghost">Me</span>
+        </h1>
+
+        <div class="about-body">
+          <p>
+            Hi, I'm <strong>Filat Astakhov</strong> — a frontend developer focused on building
+            beautiful, performant interfaces. I've been crafting web experiences since 2020,
+            working across freelance projects and product teams.
+          </p>
+          <p>
+            My approach combines <strong>technical rigor with design sensibility</strong>.
+            I care deeply about how things look and feel, not just what's running underneath.
+            From fluid transitions to accessible markup: every detail matters.
+          </p>
+          <p>
+            Outside of client work I experiment with creative coding: generative art,
+            WebGL shaders, and interactive installations that exist somewhere between
+            design and engineering.
+          </p>
+        </div>
+
+        <div class="about-section-label">Core Skills</div>
+        <div class="about-skills">
+          <span class="tag">React</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Next.js</span>
+          <span class="tag">Tailwind CSS</span>
+          <span class="tag">Framer Motion</span>
+          <span class="tag">Redux Toolkit</span>
+          <span class="tag">Three.js</span>
+          <span class="tag">WebGL</span>
+          <span class="tag">Prisma</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">Figma</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Git</span>
+        </div>
+
+        <div class="about-stats">
+          <div>
+            <div class="stat-num">5+</div>
+            <div class="stat-label">Years active</div>
+          </div>
+          <div>
+            <div class="stat-num">20+</div>
+            <div class="stat-label">Projects built</div>
+          </div>
+          <div>
+            <div class="stat-num">2</div>
+            <div class="stat-label">Disciplines</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ——— Photo ——— -->
+      <aside class="about-right" aria-label="Portrait placeholder">
+        <div class="about-photo-wrapper">
+          <div class="about-photo-frame">
+            <div class="about-photo">
+              <div class="about-photo-geo" aria-hidden="true"></div>
+              <span class="about-photo-initials" aria-label="Filat Astakhov initials">FA</span>
+              <div class="about-photo-caption">Photo placeholder</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </main>
+
+    <footer class="site-footer">
+      <span class="site-footer-text">© 2025 Filat Astakhov</span>
+      <span class="site-footer-text">Open to collaboration</span>
+    </footer>
+  </div>
+</body>
+</html>

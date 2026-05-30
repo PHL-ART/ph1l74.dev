@@ -38,3 +38,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code / Superpowers
+CLAUDE.md
+.claude/
+.agents/
+MEMORY.md

@@ -1,37 +1,39 @@
-'use client';
-
-import { ReactTyped } from 'react-typed';
-
 export const HomePageTitle = () => {
-  const strings = [
-    "Javascript",
-    "",
-    "Typescript",
-    "",
-    "React",
-    "React + Redux",
-    "",
-    "NextJS",
-    "",
-    "NodeJS",
-    "",
-    "ExpressJS",
-    "",
-  ];
-
   return (
-    <div className="flex flex-row basis-full items-center gap-10">
-      <div className="grow shrink basis-0 flex justify-center font-bold text-6xl">
-        Filat Astakhov
+    <>
+      <div className="ds-hero-eyebrow">
+        <div className="ds-status">
+          <span className="ds-status-dot" aria-hidden="true" />
+          Available for freelance &amp; collaboration
+        </div>
+        <div className="ds-eyebrow">Frontend Developer &amp; UI Engineer</div>
       </div>
-      <div className="grow shrink basis-0 text-4xl font-light">
-        <ReactTyped
-          strings={strings}
-          typeSpeed={40}
-          backSpeed={50} loop>
-        </ReactTyped>
-        <div>Developer</div>
+
+      <h1 className="ds-hero-name">
+        <span className="ds-hero-name-first">Filat</span>
+        <span className="ds-hero-name-last">Astakhov</span>
+      </h1>
+
+      <div className="ds-hero-meta">
+        <div className="ds-hero-meta-item">
+          <div className="ds-hero-meta-label">Specialization</div>
+          <div className="ds-hero-meta-value">
+            Interactive Interfaces<br />&amp; Web Experiences
+          </div>
+        </div>
+        <div className="ds-hero-meta-item">
+          <div className="ds-hero-meta-label">Current Stack</div>
+          <div className="ds-hero-meta-value">
+            React · TypeScript<br />Next.js · Tailwind
+          </div>
+        </div>
+        <div className="ds-hero-meta-item">
+          <div className="ds-hero-meta-label">Active Since</div>
+          <div className="ds-hero-meta-value">2020</div>
+        </div>
       </div>
-    </div>
+
+      <div className="ds-hero-bg-char" aria-hidden="true">A</div>
+    </>
   );
 };
