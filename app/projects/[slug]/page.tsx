@@ -36,7 +36,7 @@ export default async function ProjectPage({
           Projects
         </Link>
         <span className="ds-project-nav-meta">
-          {project.year}{category ? ` — ${category}` : ''}
+          {project.year}
         </span>
       </div>
 

@@ -94,7 +94,7 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
   padding: 0 var(--ds-px);
   border-bottom: 1px solid var(--ds-border);
-  background: oklch(5.5% 0.006 27 / 0.94);
+  background: oklch(5.5% 0.006 27 / 0.60);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -270,7 +270,7 @@ img { max-width: 100%; display: block; }
 
 /* Name display — Big Shoulders Display */
 .ds-hero-name {
-  font-family: 'Big Shoulders Display', 'Impact', sans-serif;
+  font-family: var(--font-unbounded, 'Impact', sans-serif);
   font-weight: 900;
   line-height: 0.85;
   letter-spacing: -0.03em;
@@ -331,7 +331,7 @@ img { max-width: 100%; display: block; }
   position: absolute;
   right: calc(var(--ds-px) * -0.3);
   bottom: -2rem;
-  font-family: 'Big Shoulders Display', 'Impact', sans-serif;
+  font-family: var(--font-unbounded, 'Impact', sans-serif);
   font-weight: 800;
   font-size: clamp(16rem, 32vw, 46rem);
   line-height: 1;
@@ -513,7 +513,7 @@ img { max-width: 100%; display: block; }
   padding: 0.25rem 0.5rem;
   white-space: nowrap;
   transition: border-color 0.2s var(--ds-ease-out), color 0.2s var(--ds-ease-out);
-  cursor: default;
+  cursor: pointer;
 }
 
 .ds-tag:hover {
@@ -773,6 +773,78 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-projects-list { list-style: none; }
+
+/* ─── Projects Filter Nav ─────────────────────────────────── */
+.ds-projects-filter-nav {
+  position: sticky;
+  top: var(--ds-header-h);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  height: 2.75rem;
+  border-bottom: 1px solid var(--ds-border);
+  background: oklch(5.5% 0.006 27 / 0.50);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  margin-left: calc(var(--ds-px) * -1);
+  margin-right: calc(var(--ds-px) * -1);
+  padding: 0 var(--ds-px);
+}
+
+.ds-pfn-center {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  padding-right: 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ds-pfn-center::-webkit-scrollbar { display: none; }
+
+.ds-pfn-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 100%;
+  border-left: 1px solid var(--ds-border);
+}
+
+.ds-pfn-btn--tags-link {
+  text-decoration: none;
+}
+
+.ds-pfn-btn {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 0.85rem;
+  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+  font-size: 0.52rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ds-text-2);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.22s var(--ds-ease-out), background 0.22s var(--ds-ease-out);
+}
+.ds-pfn-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 100%;
+  height: 1px;
+  background: var(--ds-accent);
+  transition: right 0.28s var(--ds-ease-out);
+}
+.ds-pfn-btn:hover { color: var(--ds-text); background: var(--ds-accent-tint); }
+.ds-pfn-btn:focus-visible { outline: 1px solid var(--ds-accent); outline-offset: -1px; }
+.ds-pfn-btn--active { color: var(--ds-accent); }
+.ds-pfn-btn--active::after { right: 0; }
+.ds-pfn-btn--tag { letter-spacing: 0.12em; font-size: 0.48rem; }
+.ds-pfn-left .ds-pfn-btn { padding-left: 0; }
 
 .ds-project-item {
   display: grid;
@@ -1186,7 +1258,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-project-hero-title {
-  font-family: 'Big Shoulders Display', 'Impact', sans-serif;
+  font-family: var(--font-unbounded, 'Impact', sans-serif);
   font-weight: 900;
   font-size: clamp(4rem, 12vw, 14rem);
   letter-spacing: -0.02em;
@@ -1236,7 +1308,7 @@ img { max-width: 100%; display: block; }
   position: absolute;
   right: calc(var(--ds-px) * -0.15);
   bottom: -3rem;
-  font-family: 'Big Shoulders Display', 'Impact', sans-serif;
+  font-family: var(--font-unbounded, 'Impact', sans-serif);
   font-weight: 900;
   font-size: clamp(14rem, 30vw, 42rem);
   line-height: 1;

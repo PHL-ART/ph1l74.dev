@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { MainLayout } from "@/shared/ui/MainLayout";
 import { ErrorProvider } from "@/shared/lib/error-context";
-import { Syne, Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
+import { Syne, Bricolage_Grotesque, JetBrains_Mono, Unbounded } from "next/font/google";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -22,6 +22,13 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500"],
   style: ["normal", "italic"],
   variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+
+const unbounded = Unbounded({
+  subsets: ["latin", "cyrillic"],
+  weight: ["900"],
+  variable: "--font-unbounded",
   display: "swap",
 });
 
@@ -45,17 +52,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${syne.variable} ${bricolage.variable} ${jetbrainsMono.variable}`}
+      className={`dark ${syne.variable} ${bricolage.variable} ${jetbrainsMono.variable} ${unbounded.variable}`}
       style={{ colorScheme: "dark" }}
     >
-      <head>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body
+<body
         className="antialiased"
         style={{ fontFamily: "var(--font-bricolage, 'Helvetica Neue', sans-serif)" }}
       >

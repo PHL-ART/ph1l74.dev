@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
+import { ProjectsFilterNav } from '@/widgets/projects-filter-nav';
 
 type ProjectItem = {
   id: number;
@@ -19,6 +20,7 @@ export const ProjectsPage = () => {
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const loadProjects = async () => {
     try {
@@ -38,6 +40,23 @@ export const ProjectsPage = () => {
 
   useEffect(() => { loadProjects(); }, []);
 
+  const allCategories = useMemo(() => {
+    const seen = new Set<string>();
+    for (const p of projects) {
+      for (const c of p.categories ?? []) seen.add(c.name);
+    }
+    return Array.from(seen).sort();
+  }, [projects]);
+
+  const filteredProjects = useMemo(() => {
+    return projects.filter((p) =>
+      activeCategory === null ||
+      p.categories?.some((c) => c.name === activeCategory) === true
+    );
+  }, [projects, activeCategory]);
+
+  const showFilterNav = !loading && !error && projects.length > 0;
+
   return (
     <main className="ds-projects-wrap">
       <div className="ds-page-header">
@@ -47,6 +66,14 @@ export const ProjectsPage = () => {
           <div>2020 – {new Date().getFullYear()}</div>
         </div>
       </div>
+
+      {showFilterNav && (
+        <ProjectsFilterNav
+          categories={allCategories}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
+      )}
 
       {loading && (
         <div className="flex min-h-[200px] items-center justify-center gap-3"
@@ -67,9 +94,15 @@ export const ProjectsPage = () => {
         </p>
       )}
 
-      {!loading && !error && projects.length > 0 && (
+      {!loading && !error && projects.length > 0 && filteredProjects.length === 0 && (
+        <p className="py-16" style={{ color: 'var(--ds-text-2)', fontFamily: 'var(--font-jetbrains-mono)', fontSize: '0.75rem', letterSpacing: '0.1em' }}>
+          No projects match the selected filters.
+        </p>
+      )}
+
+      {!loading && !error && filteredProjects.length > 0 && (
         <ul className="ds-projects-list" role="list">
-          {projects.map((p, i) => (
+          {filteredProjects.map((p, i) => (
             <li key={p.id}>
               <Link
                 href={`/projects/${p.shortname}`}
