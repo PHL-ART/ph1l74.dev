@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import prisma from '@/shared/api/database/prisma';
 import { adminAuth } from '@/shared/lib/admin-auth';
+import { s3, S3_BUCKET, S3_PUBLIC_URL } from '@/shared/lib/s3';
 
 export async function PUT(
   request: NextRequest,
@@ -49,6 +51,17 @@ export async function DELETE(
   }
 
   try {
+    const image = await prisma.image.findUnique({ where: { id: imageId } });
+    if (!image) {
+      return NextResponse.json({ error: 'Image not found' }, { status: 404 });
+    }
+
+    // Remove from S3 if the URL belongs to our bucket
+    if (image.url.startsWith(S3_PUBLIC_URL)) {
+      const key = image.url.slice(S3_PUBLIC_URL.length + 1);
+      await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: key }));
+    }
+
     await prisma.image.delete({ where: { id: imageId } });
     return NextResponse.json({ success: true });
   } catch (error) {
