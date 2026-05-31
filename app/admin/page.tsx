@@ -483,7 +483,7 @@ type ProjectsViewProps = {
   editingId: number | null;
   onReset: () => void;
   busy: boolean;
-  editingProjectImages: import('@prisma/client').Image[];
+  editingProjectImages: Image[];
   onImagesChanged: () => Promise<void>;
   onDeleteImage: (id: number) => void;
 };
@@ -547,6 +547,7 @@ function ProjectsView({
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const dragDepth = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -587,7 +588,7 @@ function ProjectsView({
             projectId: editingId,
             url: publicUrl,
             alt: file.name,
-            order: editingProjectImages.length + i,
+            order: editingProjectImages.length + i, // snapshot is from editingProjectId mount; i offsets correctly for batch uploads
           }),
         });
         if (!dbRes.ok) throw new Error('Ошибка сохранения изображения');
@@ -753,10 +754,12 @@ function ProjectsView({
                       transition: 'border-color 0.15s, color 0.15s',
                     }}
                     onClick={() => !uploading && fileInputRef.current?.click()}
-                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                    onDragLeave={() => setDragOver(false)}
+                    onDragEnter={(e) => { e.preventDefault(); dragDepth.current += 1; setDragOver(true); }}
+                    onDragOver={(e) => { e.preventDefault(); }}
+                    onDragLeave={() => { dragDepth.current -= 1; if (dragDepth.current === 0) setDragOver(false); }}
                     onDrop={(e) => {
                       e.preventDefault();
+                      dragDepth.current = 0;
                       setDragOver(false);
                       if (!uploading) handleUploadFiles(e.dataTransfer.files);
                     }}
