@@ -54,8 +54,6 @@ export default function AdminPage() {
   const [tagForm, setTagForm] = useState({ name: '', description: '' });
   const [editingTagId, setEditingTagId] = useState<number | null>(null);
 
-  const [imageForm, setImageForm] = useState({ projectId: 0, url: '', alt: '', order: 0 });
-  const [editingImageId, setEditingImageId] = useState<number | null>(null);
 
   const [linkForm, setLinkForm] = useState({ projectId: 0, name: '', href: '' });
   const [editingLinkId, setEditingLinkId] = useState<number | null>(null);
@@ -237,27 +235,13 @@ export default function AdminPage() {
     finally { setBusy(false); }
   };
 
-  const resetImageForm = () => { setImageForm({ projectId: 0, url: '', alt: '', order: 0 }); setEditingImageId(null); };
-
-  const submitImage = async () => {
-    setBusy(true); setError(null);
-    try {
-      const method = editingImageId ? 'PUT' : 'POST';
-      const url = editingImageId ? `/api/admin/images/${editingImageId}` : '/api/admin/images';
-      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(imageForm) });
-      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось сохранить изображение'); }
-      await fetchImages(); resetImageForm();
-    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка сохранения изображения'); }
-    finally { setBusy(false); }
-  };
-
   const deleteImage = async (id: number) => {
     if (!window.confirm('Удалить изображение?')) return;
     setBusy(true); setError(null);
     try {
       const res = await fetch(`/api/admin/images/${id}`, { method: 'DELETE' });
       if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось удалить изображение'); }
-      await fetchImages();
+      await Promise.all([fetchImages(), fetchProjects()]);
     } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка удаления изображения'); }
     finally { setBusy(false); }
   };
@@ -450,17 +434,7 @@ export default function AdminPage() {
           {active === 'images' && (
             <ImagesView
               images={images}
-              projects={projectSelectOptions}
-              form={imageForm}
-              setForm={setImageForm}
-              onSubmit={submitImage}
               onDelete={deleteImage}
-              onEdit={(img) => {
-                setEditingImageId(img.id);
-                setImageForm({ projectId: img.projectId, url: img.url, alt: img.alt || '', order: img.order });
-              }}
-              editingId={editingImageId}
-              onReset={resetImageForm}
               busy={busy}
             />
           )}
@@ -833,112 +807,100 @@ function TagsView({ tags, form, setForm, onSubmit, onDelete, onEdit, editingId, 
 
 type ImagesViewProps = {
   images: ImageWithProject[];
-  projects: { id: number; label: string }[];
-  form: { projectId: number; url: string; alt: string; order: number };
-  setForm: React.Dispatch<React.SetStateAction<{ projectId: number; url: string; alt: string; order: number }>>;
-  onSubmit: () => Promise<void>;
   onDelete: (id: number) => void;
-  onEdit: (image: ImageWithProject) => void;
-  editingId: number | null;
-  onReset: () => void;
   busy: boolean;
 };
 
-function ImagesView({ images, projects, form, setForm, onSubmit, onDelete, onEdit, editingId, onReset, busy }: ImagesViewProps) {
+function ImageThumb({
+  img,
+  onDelete,
+  busy,
+}: {
+  img: ImageWithProject;
+  onDelete: (id: number) => void;
+  busy: boolean;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      style={{
+        position: 'relative',
+        aspectRatio: '1',
+        cursor: busy ? 'not-allowed' : 'pointer',
+        borderRadius: '5px',
+        overflow: 'hidden',
+        border: '1px solid #2a2a2a',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => !busy && onDelete(img.id)}
+      title={img.alt ?? img.url}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={img.url}
+        alt={img.alt ?? ''}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+      {hovered && !busy && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(153, 27, 27, 0.80)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ color: 'white', fontSize: '1.25rem', fontWeight: 'bold' }}>✕</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ImagesView({ images, onDelete, busy }: ImagesViewProps) {
+  const grouped = useMemo(() => {
+    const map = new Map<number, { projectTitle: string; imgs: ImageWithProject[] }>();
+    for (const img of images) {
+      if (!map.has(img.projectId)) {
+        map.set(img.projectId, { projectTitle: img.project.title, imgs: [] });
+      }
+      map.get(img.projectId)!.imgs.push(img);
+    }
+    return Array.from(map.values());
+  }, [images]);
+
   return (
     <>
       <div className="ds-admin-section-head">
         <div>
-          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>
-            {editingId ? 'Редактирование' : 'Новое изображение'}
-          </p>
+          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>Галерея</p>
           <h2 className="ds-admin-section-title">Изображения</h2>
         </div>
-        {editingId && (
-          <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
-            Сбросить форму
-          </button>
-        )}
       </div>
 
-      <div className="ds-admin-grid">
-        <div className="ds-admin-form-col">
-          <div className="ds-admin-field">
-            <label className="ds-admin-label">Проект</label>
-            <select
-              className="ds-admin-select"
-              value={form.projectId}
-              onChange={(e) => setForm((s) => ({ ...s, projectId: Number(e.target.value) }))}
-            >
-              <option value={0}>Выберите проект</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>{p.label}</option>
+      {grouped.length === 0 ? (
+        <div className="ds-admin-empty">Изображений пока нет</div>
+      ) : (
+        grouped.map((group) => (
+          <div key={group.projectTitle} style={{ marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgb(153,27,27)' }}>
+                {group.projectTitle}
+              </span>
+              <div style={{ flex: 1, height: '1px', background: '#2a2a2a' }} />
+              <span style={{ fontSize: '0.58rem', color: '#555' }}>{group.imgs.length} фото</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '5px' }}>
+              {group.imgs.map((img) => (
+                <ImageThumb key={img.id} img={img} onDelete={onDelete} busy={busy} />
               ))}
-            </select>
+            </div>
           </div>
-          <div className="ds-admin-field">
-            <label className="ds-admin-label">URL</label>
-            <input
-              className="ds-admin-input"
-              value={form.url}
-              onChange={(e) => setForm((s) => ({ ...s, url: e.target.value }))}
-            />
-          </div>
-          <div className="ds-admin-field">
-            <label className="ds-admin-label">Alt (опционально)</label>
-            <input
-              className="ds-admin-input"
-              value={form.alt}
-              onChange={(e) => setForm((s) => ({ ...s, alt: e.target.value }))}
-            />
-          </div>
-          <div className="ds-admin-field" style={{ marginBottom: 0 }}>
-            <label className="ds-admin-label">Порядок</label>
-            <input
-              type="number"
-              className="ds-admin-input"
-              value={form.order}
-              onChange={(e) => setForm((s) => ({ ...s, order: Number(e.target.value) || 0 }))}
-            />
-          </div>
-          <div className="ds-admin-btn-group">
-            <button type="button" className="ds-admin-btn-primary" onClick={onSubmit} disabled={busy || !form.projectId}>
-              {editingId ? 'Сохранить' : 'Добавить'}
-            </button>
-            {editingId && (
-              <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
-                Отменить
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="ds-admin-list-col">
-          {images.length === 0 ? (
-            <div className="ds-admin-empty">Изображений пока нет</div>
-          ) : (
-            images.map((img) => (
-              <div key={img.id} className="ds-admin-list-row">
-                <div style={{ minWidth: 0 }}>
-                  <p className="ds-admin-row-meta">#{img.id} — {img.project.title} — порядок {img.order}</p>
-                  <p className="ds-admin-row-body" style={{ wordBreak: 'break-all', marginTop: '0.25rem' }}>{img.url}</p>
-                  {img.alt && (
-                    <p className="ds-admin-row-body" style={{ opacity: 0.65 }}>alt: {img.alt}</p>
-                  )}
-                </div>
-                <div className="ds-admin-row-actions">
-                  <button type="button" className="ds-admin-btn-secondary" onClick={() => onEdit(img)}>
-                    Ред.
-                  </button>
-                  <button type="button" className="ds-admin-btn-danger" onClick={() => onDelete(img.id)}>
-                    Удал.
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+        ))
+      )}
     </>
   );
 }
