@@ -553,6 +553,7 @@ function ProjectsView({
   useEffect(() => {
     setAccordionOpen(false);
     setUploadError(null);
+    dragDepth.current = 0;
   }, [editingId]);
 
   const handleUploadFiles = async (files: FileList | File[]) => {

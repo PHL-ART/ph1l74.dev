@@ -58,7 +58,7 @@ export async function DELETE(
 
     // Remove from S3 if the URL belongs to our bucket
     if (image.url.startsWith(S3_PUBLIC_URL)) {
-      const key = image.url.slice(S3_PUBLIC_URL.length + 1);
+      const key = new URL(image.url).pathname.slice(1);
       await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: key }));
     }
 
