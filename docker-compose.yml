@@ -8,10 +8,6 @@ services:
     container_name: ph1l74-dev
     restart: unless-stopped
 
-    # Порт, по которому Next.js-приложение будет доступно напрямую
-    ports:
-      - "3000:3000"
-
     # Переменные окружения приложения
     environment:
       - NODE_ENV=production
@@ -30,18 +26,23 @@ services:
     networks:
       - ph1l74-network
 
-    # Лейблы Traefik по образцу из BUILD_REFERENCES.md
+
     labels:
       - "traefik.enable=true"
+
+      - "traefik.docker.network=ph1l74-network"
 
       # HTTP router
       - "traefik.http.routers.ph1l74-dev.rule=Host(`dev.ph1l74.com`) || Host(`www.dev.ph1l74.com`)"
       - "traefik.http.routers.ph1l74-dev.entrypoints=web"
 
+      - "traefik.http.routers.ph1l74-dev.service=ph1l74-dev"
+
       # HTTPS router
       - "traefik.http.routers.ph1l74-dev-secure.rule=Host(`dev.ph1l74.com`) || Host(`www.dev.ph1l74.com`)"
       - "traefik.http.routers.ph1l74-dev-secure.entrypoints=websecure"
       - "traefik.http.routers.ph1l74-dev-secure.tls=true"
+      - "traefik.http.routers.ph1l74-dev-secure.service=ph1l74-dev"
       - "traefik.http.routers.ph1l74-dev-secure.tls.certresolver=letsencrypt"
 
       # Редирект HTTP -> HTTPS
@@ -49,7 +50,7 @@ services:
       - "traefik.http.middlewares.ph1l74-dev-redirect.redirectscheme.permanent=true"
       - "traefik.http.routers.ph1l74-dev.middlewares=ph1l74-dev-redirect"
 
-      # Приложение слушает порт 3000
+      # Приложение слушает порт 3002
       - "traefik.http.services.ph1l74-dev.loadbalancer.server.port=3000"
 
       # Дополнительные security-заголовки
@@ -67,4 +68,3 @@ services:
 networks:
   ph1l74-network:
     external: true
-    name: ph1l74-network
