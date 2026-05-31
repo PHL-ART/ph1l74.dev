@@ -36,7 +36,7 @@ export default async function ProjectPage({
           Projects
         </Link>
         <span className="ds-project-nav-meta">
-          {project.year}{category ? ` — ${category}` : ''}
+          {project.year}
         </span>
       </div>
 
@@ -80,10 +80,16 @@ export default async function ProjectPage({
         <aside className="ds-project-sidebar">
           {tags.length > 0 && (
             <div className="ds-project-sidebar-block">
-              <div className="ds-project-sidebar-label">Stack</div>
+              <div className="ds-project-sidebar-label">Tags</div>
               <div className="ds-project-tags-wrap">
                 {tags.map((tag) => (
-                  <span key={tag} className="ds-tag">{tag}</span>
+                  <Link
+                    key={tag}
+                    href={`/projects?tag=${encodeURIComponent(tag)}`}
+                    className="ds-tag"
+                  >
+                    {tag}
+                  </Link>
                 ))}
               </div>
             </div>
@@ -117,7 +123,12 @@ export default async function ProjectPage({
           {category && (
             <div className="ds-project-sidebar-block">
               <div className="ds-project-sidebar-label">Category</div>
-              <div className="ds-project-sidebar-value">{category}</div>
+              <Link
+                href={`/projects?category=${encodeURIComponent(category)}`}
+                className="ds-project-sidebar-value ds-sidebar-cat-link"
+              >
+                {category}
+              </Link>
             </div>
           )}
         </aside>

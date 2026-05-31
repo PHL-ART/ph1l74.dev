@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Category, Image, Project, ProjectTag, Tag } from '@prisma/client';
 
 type EntityKey = 'projects' | 'categories' | 'tags' | 'images' | 'links';
@@ -16,7 +16,7 @@ type LinkWithProject = { id: number; name: string; href: string; projectId: numb
 
 const sidebarItems: { key: EntityKey; label: string }[] = [
   { key: 'projects', label: 'Проекты' },
-  { key: 'categories', label: 'Рубрики' },
+  { key: 'categories', label: 'Категории' },
   { key: 'tags', label: 'Теги' },
   { key: 'images', label: 'Изображения' },
   { key: 'links', label: 'Ссылки' },
@@ -54,27 +54,12 @@ export default function AdminPage() {
   const [tagForm, setTagForm] = useState({ name: '', description: '' });
   const [editingTagId, setEditingTagId] = useState<number | null>(null);
 
-  const [imageForm, setImageForm] = useState({
-    projectId: 0,
-    url: '',
-    alt: '',
-    order: 0,
-  });
-  const [editingImageId, setEditingImageId] = useState<number | null>(null);
 
-  const [linkForm, setLinkForm] = useState({
-    projectId: 0,
-    name: '',
-    href: '',
-  });
+  const [linkForm, setLinkForm] = useState({ projectId: 0, name: '', href: '' });
   const [editingLinkId, setEditingLinkId] = useState<number | null>(null);
 
   const projectSelectOptions = useMemo(
-    () =>
-      projects.map((p) => ({
-        id: p.id,
-        label: `${p.title} (${p.shortname})`,
-      })),
+    () => projects.map((p) => ({ id: p.id, label: `${p.title} (${p.shortname})` })),
     [projects],
   );
 
@@ -97,7 +82,7 @@ export default function AdminPage() {
 
   const fetchCategories = async () => {
     const res = await fetch('/api/admin/categories', { cache: 'no-store' });
-    if (!res.ok) throw new Error('Не удалось получить рубрики');
+    if (!res.ok) throw new Error('Не удалось получить категории');
     setCategories(await res.json());
   };
 
@@ -120,23 +105,13 @@ export default function AdminPage() {
   };
 
   const reloadAll = async () => {
-    await Promise.all([
-      fetchProjects(),
-      fetchCategories(),
-      fetchTags(),
-      fetchImages(),
-      fetchLinks(),
-    ]);
+    await Promise.all([fetchProjects(), fetchCategories(), fetchTags(), fetchImages(), fetchLinks()]);
   };
 
-  useEffect(() => {
-    loadSession();
-  }, []);
+  useEffect(() => { loadSession(); }, []);
 
   useEffect(() => {
-    if (authenticated) {
-      reloadAll().catch((err) => setError(err.message));
-    }
+    if (authenticated) reloadAll().catch((err) => setError(err.message));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated]);
 
@@ -170,51 +145,30 @@ export default function AdminPage() {
 
   const resetProjectForm = () => {
     setProjectForm({
-      shortname: '',
-      title: '',
-      year: new Date().getFullYear(),
-      description: '',
-      url: '',
-      categoryIds: [],
-      tagIds: [],
+      shortname: '', title: '', year: new Date().getFullYear(),
+      description: '', url: '', categoryIds: [], tagIds: [],
     });
     setEditingProjectId(null);
   };
 
   const submitProject = async () => {
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
       const method = editingProjectId ? 'PUT' : 'POST';
-      const url = editingProjectId
-        ? `/api/admin/projects/${editingProjectId}`
-        : '/api/admin/projects';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(projectForm),
-      });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось сохранить проект');
-      }
+      const url = editingProjectId ? `/api/admin/projects/${editingProjectId}` : '/api/admin/projects';
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(projectForm) });
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось сохранить проект'); }
       await fetchProjects();
       resetProjectForm();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка сохранения проекта');
-    } finally {
-      setBusy(false);
-    }
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка сохранения проекта'); }
+    finally { setBusy(false); }
   };
 
   const startEditProject = (project: ProjectWithRelations) => {
     setEditingProjectId(project.id);
     setProjectForm({
-      shortname: project.shortname,
-      title: project.title,
-      year: project.year,
-      description: project.description,
-      url: project.url || '',
+      shortname: project.shortname, title: project.title, year: project.year,
+      description: project.description, url: project.url || '',
       categoryIds: project.categories?.map((c) => c.id) || [],
       tagIds: project.tags?.map((t) => t.tagId) || [],
     });
@@ -222,397 +176,297 @@ export default function AdminPage() {
 
   const deleteProject = async (id: number) => {
     if (!window.confirm('Удалить проект?')) return;
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
       const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось удалить проект');
-      }
-      await fetchProjects();
-      await fetchImages();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка удаления проекта');
-    } finally {
-      setBusy(false);
-    }
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось удалить проект'); }
+      await fetchProjects(); await fetchImages();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка удаления проекта'); }
+    finally { setBusy(false); }
   };
 
-  const resetCategoryForm = () => {
-    setCategoryForm({ name: '', description: '' });
-    setEditingCategoryId(null);
-  };
+  const resetCategoryForm = () => { setCategoryForm({ name: '', description: '' }); setEditingCategoryId(null); };
 
   const submitCategory = async () => {
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
       const method = editingCategoryId ? 'PUT' : 'POST';
-      const url = editingCategoryId
-        ? `/api/admin/categories/${editingCategoryId}`
-        : '/api/admin/categories';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(categoryForm),
-      });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось сохранить рубрику');
-      }
-      await fetchCategories();
-      resetCategoryForm();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка сохранения рубрики');
-    } finally {
-      setBusy(false);
-    }
+      const url = editingCategoryId ? `/api/admin/categories/${editingCategoryId}` : '/api/admin/categories';
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(categoryForm) });
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось сохранить категорию'); }
+      await fetchCategories(); resetCategoryForm();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка сохранения категории'); }
+    finally { setBusy(false); }
   };
 
   const deleteCategory = async (id: number) => {
-    if (!window.confirm('Удалить рубрику?')) return;
-    setBusy(true);
-    setError(null);
+    if (!window.confirm('Удалить категорию?')) return;
+    setBusy(true); setError(null);
     try {
       const res = await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось удалить рубрику');
-      }
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось удалить категорию'); }
       await Promise.all([fetchCategories(), fetchProjects()]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка удаления рубрики');
-    } finally {
-      setBusy(false);
-    }
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка удаления категории'); }
+    finally { setBusy(false); }
   };
 
-  const resetTagForm = () => {
-    setTagForm({ name: '', description: '' });
-    setEditingTagId(null);
-  };
+  const resetTagForm = () => { setTagForm({ name: '', description: '' }); setEditingTagId(null); };
 
   const submitTag = async () => {
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
       const method = editingTagId ? 'PUT' : 'POST';
       const url = editingTagId ? `/api/admin/tags/${editingTagId}` : '/api/admin/tags';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(tagForm),
-      });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось сохранить тег');
-      }
-      await fetchTags();
-      resetTagForm();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка сохранения тега');
-    } finally {
-      setBusy(false);
-    }
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(tagForm) });
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось сохранить тег'); }
+      await fetchTags(); resetTagForm();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка сохранения тега'); }
+    finally { setBusy(false); }
   };
 
   const deleteTag = async (id: number) => {
     if (!window.confirm('Удалить тег?')) return;
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
       const res = await fetch(`/api/admin/tags/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось удалить тег');
-      }
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось удалить тег'); }
       await Promise.all([fetchTags(), fetchProjects()]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка удаления тега');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const resetImageForm = () => {
-    setImageForm({ projectId: 0, url: '', alt: '', order: 0 });
-    setEditingImageId(null);
-  };
-
-  const submitImage = async () => {
-    setBusy(true);
-    setError(null);
-    try {
-      const method = editingImageId ? 'PUT' : 'POST';
-      const url = editingImageId ? `/api/admin/images/${editingImageId}` : '/api/admin/images';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(imageForm),
-      });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось сохранить изображение');
-      }
-      await fetchImages();
-      resetImageForm();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка сохранения изображения');
-    } finally {
-      setBusy(false);
-    }
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка удаления тега'); }
+    finally { setBusy(false); }
   };
 
   const deleteImage = async (id: number) => {
     if (!window.confirm('Удалить изображение?')) return;
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
       const res = await fetch(`/api/admin/images/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось удалить изображение');
-      }
-      await fetchImages();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка удаления изображения');
-    } finally {
-      setBusy(false);
-    }
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось удалить изображение'); }
+      await Promise.all([fetchImages(), fetchProjects()]);
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка удаления изображения'); }
+    finally { setBusy(false); }
   };
 
-  const resetLinkForm = () => {
-    setLinkForm({ projectId: 0, name: '', href: '' });
-    setEditingLinkId(null);
-  };
+  const resetLinkForm = () => { setLinkForm({ projectId: 0, name: '', href: '' }); setEditingLinkId(null); };
 
   const submitLink = async () => {
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
       const method = editingLinkId ? 'PUT' : 'POST';
       const url = editingLinkId ? `/api/admin/links/${editingLinkId}` : '/api/admin/links';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(linkForm),
-      });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось сохранить ссылку');
-      }
-      await fetchLinks();
-      resetLinkForm();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка сохранения ссылки');
-    } finally {
-      setBusy(false);
-    }
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(linkForm) });
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось сохранить ссылку'); }
+      await fetchLinks(); resetLinkForm();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка сохранения ссылки'); }
+    finally { setBusy(false); }
   };
 
   const deleteLink = async (id: number) => {
     if (!window.confirm('Удалить ссылку?')) return;
-    setBusy(true);
-    setError(null);
+    setBusy(true); setError(null);
     try {
       const res = await fetch(`/api/admin/links/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || 'Не удалось удалить ссылку');
-      }
+      if (!res.ok) { const p = await res.json().catch(() => ({})); throw new Error(p.error || 'Не удалось удалить ссылку'); }
       await fetchLinks();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка удаления ссылки');
-    } finally {
-      setBusy(false);
-    }
+    } catch (err) { setError(err instanceof Error ? err.message : 'Ошибка удаления ссылки'); }
+    finally { setBusy(false); }
   };
 
   if (checkingSession) {
     return (
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-8 text-center">
-        <p className="text-sm text-neutral-400">Проверяем сессию...</p>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem' }}>
+        <span className="ds-admin-label">Проверяем сессию</span>
       </div>
     );
   }
 
   if (!authenticated) {
     return (
-      <div className="fixed inset-0 z-10 flex items-center justify-center">
-        <div className="mx-auto flex w-full max-w-xl flex-col gap-6 rounded-xl border border-neutral-800 bg-neutral-900/85 p-8 shadow-xl backdrop-blur">
-          {error && (
-          <div className="rounded border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm text-red-200">
-            {error}
+      <div className="ds-admin-auth">
+        <div className="ds-admin-auth-card">
+          <div className="ds-admin-auth-header">
+            <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>Admin</p>
+            <h1 className="ds-admin-section-title" style={{ marginTop: '0.55rem' }}>
+              Вход в панель
+            </h1>
           </div>
-        )}
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-neutral-300">Логин</span>
-          <input
-            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-            value={loginForm.username}
-            onChange={(e) => setLoginForm((s) => ({ ...s, username: e.target.value }))}
-            placeholder="admin"
-          />
-        </label>
-        <label className="flex flex-col gap-2 text-sm">
-          <span className="text-neutral-300">Пароль</span>
-          <input
-            type="password"
-            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-            value={loginForm.password}
-            onChange={(e) => setLoginForm((s) => ({ ...s, password: e.target.value }))}
-            placeholder="••••••"
-          />
-        </label>
-        <button
-          type="button"
-          className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-          onClick={handleLogin}
-          disabled={busy}
-        >
-          Войти
-        </button>
+          <div className="ds-admin-auth-body">
+            {error && <div className="ds-admin-error">{error}</div>}
+            <div className="ds-admin-field" style={{ marginBottom: 0 }}>
+              <label className="ds-admin-label" htmlFor="admin-username">Логин</label>
+              <input
+                id="admin-username"
+                className="ds-admin-input"
+                autoComplete="username"
+                value={loginForm.username}
+                onChange={(e) => setLoginForm((s) => ({ ...s, username: e.target.value }))}
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                placeholder="admin"
+              />
+            </div>
+            <div className="ds-admin-field" style={{ marginBottom: 0 }}>
+              <label className="ds-admin-label" htmlFor="admin-password">Пароль</label>
+              <input
+                id="admin-password"
+                type="password"
+                className="ds-admin-input"
+                autoComplete="current-password"
+                value={loginForm.password}
+                onChange={(e) => setLoginForm((s) => ({ ...s, password: e.target.value }))}
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                placeholder="••••••"
+              />
+            </div>
+            <button
+              type="button"
+              className="ds-admin-btn-primary"
+              style={{ width: '100%', marginTop: '0.5rem' }}
+              onClick={handleLogin}
+              disabled={busy}
+            >
+              {busy ? 'Входим...' : 'Войти'}
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
+  const itemCounts: Record<EntityKey, number> = {
+    projects: projects.length,
+    categories: categories.length,
+    tags: tags.length,
+    images: images.length,
+    links: links.length,
+  };
+
+  const activeLabel = sidebarItems.find((i) => i.key === active)?.label ?? '';
+
   return (
-    <div className="flex w-full gap-6 rounded-xl border border-neutral-800 bg-neutral-900/80 p-4 shadow-lg backdrop-blur">
-      <aside className="w-64 shrink-0 space-y-4">
-        <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-3">
-          <p className="text-xs uppercase tracking-wide text-neutral-500">Навигация</p>
-          <div className="mt-2 flex flex-col gap-2">
-            {sidebarItems.map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                onClick={() => setActive(item.key)}
-                className={`rounded-md px-3 py-2 text-left text-sm font-medium transition ${
-                  active === item.key
-            ? 'bg-[rgb(153,27,27)] text-white'
-                    : 'bg-neutral-800 text-neutral-200 hover:bg-neutral-700'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+    <div className="ds-admin">
+      <aside className="ds-admin-sidebar">
+        <div className="ds-admin-sidebar-brand">
+          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>CMS</p>
         </div>
-        <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-3">
-          <p className="text-xs uppercase tracking-wide text-neutral-500">Сессия</p>
+        <div className="ds-admin-nav">
+          {sidebarItems.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              className={`ds-admin-nav-btn${active === item.key ? ' ds-admin-nav-btn--active' : ''}`}
+              onClick={() => setActive(item.key)}
+            >
+              <span>{item.label}</span>
+              <span className="ds-admin-nav-count">{itemCounts[item.key]}</span>
+            </button>
+          ))}
+        </div>
+        <div className="ds-admin-sidebar-footer">
           <button
             type="button"
+            className="ds-admin-btn-secondary"
+            style={{ width: '100%' }}
             onClick={handleLogout}
-            className="mt-2 w-full rounded-md border border-neutral-700 px-3 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
           >
             Выйти
           </button>
         </div>
-        {error && (
-          <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
-            {error}
-          </div>
-        )}
       </aside>
 
-      <section className="flex min-h-[70vh] w-full flex-col gap-4 rounded-lg border border-neutral-800 bg-neutral-950 p-4">
-        {active === 'projects' && (
-          <ProjectsView
-            projects={projects}
-            categories={categories}
-            tags={tags}
-            form={projectForm}
-            setForm={setProjectForm}
-            onSubmit={submitProject}
-            onEdit={startEditProject}
-            onDelete={deleteProject}
-            editingId={editingProjectId}
-            onReset={resetProjectForm}
-            busy={busy}
-          />
-        )}
+      <main className="ds-admin-main">
+        <div className="ds-admin-topbar">
+          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.20em' }}>
+            {activeLabel}
+          </p>
+          {error && <div className="ds-admin-error">{error}</div>}
+        </div>
 
-        {active === 'categories' && (
-          <CategoriesView
-            categories={categories}
-            form={categoryForm}
-            setForm={setCategoryForm}
-            onSubmit={submitCategory}
-            onDelete={deleteCategory}
-            onEdit={(cat) => {
-              setEditingCategoryId(cat.id);
-              setCategoryForm({ name: cat.name, description: cat.description || '' });
-            }}
-            editingId={editingCategoryId}
-            onReset={resetCategoryForm}
-            busy={busy}
-          />
-        )}
+        <div className="ds-admin-content-area">
+          {active === 'projects' && (
+            <ProjectsView
+              projects={projects}
+              categories={categories}
+              tags={tags}
+              form={projectForm}
+              setForm={setProjectForm}
+              onSubmit={submitProject}
+              onEdit={startEditProject}
+              onDelete={deleteProject}
+              editingId={editingProjectId}
+              onReset={resetProjectForm}
+              busy={busy}
+              editingProjectImages={
+                editingProjectId
+                  ? (projects.find((p) => p.id === editingProjectId)?.images ?? [])
+                  : []
+              }
+              onImagesChanged={async () => {
+                await Promise.all([fetchProjects(), fetchImages()]);
+              }}
+              onDeleteImage={deleteImage}
+            />
+          )}
 
-        {active === 'tags' && (
-          <TagsView
-            tags={tags}
-            form={tagForm}
-            setForm={setTagForm}
-            onSubmit={submitTag}
-            onDelete={deleteTag}
-            onEdit={(tag) => {
-              setEditingTagId(tag.id);
-              setTagForm({ name: tag.name, description: tag.description || '' });
-            }}
-            editingId={editingTagId}
-            onReset={resetTagForm}
-            busy={busy}
-          />
-        )}
+          {active === 'categories' && (
+            <CategoriesView
+              categories={categories}
+              form={categoryForm}
+              setForm={setCategoryForm}
+              onSubmit={submitCategory}
+              onDelete={deleteCategory}
+              onEdit={(cat) => {
+                setEditingCategoryId(cat.id);
+                setCategoryForm({ name: cat.name, description: cat.description || '' });
+              }}
+              editingId={editingCategoryId}
+              onReset={resetCategoryForm}
+              busy={busy}
+            />
+          )}
 
-        {active === 'images' && (
-          <ImagesView
-            images={images}
-            projects={projectSelectOptions}
-            form={imageForm}
-            setForm={setImageForm}
-            onSubmit={submitImage}
-            onDelete={deleteImage}
-            onEdit={(img) => {
-              setEditingImageId(img.id);
-              setImageForm({
-                projectId: img.projectId,
-                url: img.url,
-                alt: img.alt || '',
-                order: img.order,
-              });
-            }}
-            editingId={editingImageId}
-            onReset={resetImageForm}
-            busy={busy}
-          />
-        )}
+          {active === 'tags' && (
+            <TagsView
+              tags={tags}
+              form={tagForm}
+              setForm={setTagForm}
+              onSubmit={submitTag}
+              onDelete={deleteTag}
+              onEdit={(tag) => {
+                setEditingTagId(tag.id);
+                setTagForm({ name: tag.name, description: tag.description || '' });
+              }}
+              editingId={editingTagId}
+              onReset={resetTagForm}
+              busy={busy}
+            />
+          )}
 
-        {active === 'links' && (
-          <LinksView
-            links={links}
-            projects={projectSelectOptions}
-            form={linkForm}
-            setForm={setLinkForm}
-            onSubmit={submitLink}
-            onDelete={deleteLink}
-            onEdit={(link) => {
-              setEditingLinkId(link.id);
-              setLinkForm({
-                projectId: link.projectId,
-                name: link.name,
-                href: link.href,
-              });
-            }}
-            editingId={editingLinkId}
-            onReset={resetLinkForm}
-            busy={busy}
-          />
-        )}
-      </section>
+          {active === 'images' && (
+            <ImagesView
+              images={images}
+              onDelete={deleteImage}
+              busy={busy}
+            />
+          )}
+
+          {active === 'links' && (
+            <LinksView
+              links={links}
+              projects={projectSelectOptions}
+              form={linkForm}
+              setForm={setLinkForm}
+              onSubmit={submitLink}
+              onDelete={deleteLink}
+              onEdit={(link) => {
+                setEditingLinkId(link.id);
+                setLinkForm({ projectId: link.projectId, name: link.name, href: link.href });
+              }}
+              editingId={editingLinkId}
+              onReset={resetLinkForm}
+              busy={busy}
+            />
+          )}
+        </div>
+      </main>
     </div>
   );
 }
@@ -621,235 +475,356 @@ type ProjectsViewProps = {
   projects: ProjectWithRelations[];
   categories: Category[];
   tags: Tag[];
-  form: {
-    shortname: string;
-    title: string;
-    year: number;
-    description: string;
-    url: string;
-    categoryIds: number[];
-    tagIds: number[];
-  };
-  setForm: React.Dispatch<
-    React.SetStateAction<{
-      shortname: string;
-      title: string;
-      year: number;
-      description: string;
-      url: string;
-      categoryIds: number[];
-      tagIds: number[];
-    }>
-  >;
+  form: { shortname: string; title: string; year: number; description: string; url: string; categoryIds: number[]; tagIds: number[] };
+  setForm: React.Dispatch<React.SetStateAction<{ shortname: string; title: string; year: number; description: string; url: string; categoryIds: number[]; tagIds: number[] }>>;
   onSubmit: () => Promise<void>;
   onEdit: (project: ProjectWithRelations) => void;
   onDelete: (id: number) => void;
   editingId: number | null;
   onReset: () => void;
   busy: boolean;
+  editingProjectImages: Image[];
+  onImagesChanged: () => Promise<void>;
+  onDeleteImage: (id: number) => void;
 };
 
-function ProjectsView({
-  projects,
-  categories,
-  tags,
-  form,
-  setForm,
-  onSubmit,
-  onEdit,
+function AccordionThumb({
+  img,
   onDelete,
-  editingId,
-  onReset,
   busy,
+}: {
+  img: { id: number; url: string; alt: string | null };
+  onDelete: (id: number) => void;
+  busy: boolean;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      style={{
+        position: 'relative',
+        aspectRatio: '1',
+        cursor: busy ? 'not-allowed' : 'pointer',
+        borderRadius: '4px',
+        overflow: 'hidden',
+        border: '1px solid #2a2a2a',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => !busy && onDelete(img.id)}
+      title={img.alt ?? img.url}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={img.url}
+        alt={img.alt ?? img.url}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+      {hovered && !busy && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(153, 27, 27, 0.80)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ color: 'white', fontSize: '1rem', fontWeight: 'bold' }}>✕</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProjectsView({
+  projects, categories, tags, form, setForm, onSubmit, onEdit, onDelete,
+  editingId, onReset, busy,
+  editingProjectImages, onImagesChanged, onDeleteImage,
 }: ProjectsViewProps) {
+  const [accordionOpen, setAccordionOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const dragDepth = useRef(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setAccordionOpen(false);
+    setUploadError(null);
+    dragDepth.current = 0;
+  }, [editingId]);
+
+  const handleUploadFiles = async (files: FileList | File[]) => {
+    const arr = Array.from(files).filter((f) => f.type.startsWith('image/'));
+    if (!arr.length || !editingId) return;
+    setUploading(true);
+    setUploadError(null);
+    setUploadProgress({ current: 0, total: arr.length });
+    try {
+      for (let i = 0; i < arr.length; i++) {
+        setUploadProgress({ current: i + 1, total: arr.length });
+        const file = arr[i];
+
+        const presignRes = await fetch('/api/admin/upload/presign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, contentType: file.type, projectId: editingId }),
+        });
+        if (!presignRes.ok) throw new Error('Не удалось получить ссылку для загрузки');
+        const { uploadUrl, publicUrl } = await presignRes.json() as { uploadUrl: string; publicUrl: string };
+
+        const s3Res = await fetch(uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': file.type },
+          body: file,
+        });
+        if (!s3Res.ok) throw new Error('Ошибка загрузки в хранилище');
+
+        const dbRes = await fetch('/api/admin/images', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectId: editingId,
+            url: publicUrl,
+            alt: file.name,
+            order: editingProjectImages.length + i, // snapshot is from editingProjectId mount; i offsets correctly for batch uploads
+          }),
+        });
+        if (!dbRes.ok) throw new Error('Ошибка сохранения изображения');
+      }
+      await onImagesChanged();
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Ошибка загрузки');
+    } finally {
+      setUploading(false);
+      setUploadProgress(null);
+    }
+  };
+
   return (
     <>
-      <header className="flex flex-wrap items-center justify-between gap-3">
+      <div className="ds-admin-section-head">
         <div>
-          <h2 className="text-xl font-semibold">Проекты</h2>
-          <p className="text-sm text-neutral-500">Создание и редактирование проектов</p>
+          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>
+            {editingId ? 'Редактирование' : 'Новый проект'}
+          </p>
+          <h2 className="ds-admin-section-title">Проекты</h2>
         </div>
         {editingId && (
-          <button
-            type="button"
-            onClick={onReset}
-            className="text-sm text-neutral-400 underline-offset-4 hover:text-white hover:underline"
-          >
+          <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
             Сбросить форму
           </button>
         )}
-      </header>
+      </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-          <div className="grid gap-3">
-            <label className="grid gap-1 text-sm">
-              <span className="text-neutral-300">Короткое имя (slug)</span>
-              <input
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-                value={form.shortname}
-                onChange={(e) => setForm((s) => ({ ...s, shortname: e.target.value }))}
-                placeholder="my-project"
-              />
-            </label>
-            <label className="grid gap-1 text-sm">
-              <span className="text-neutral-300">Заголовок</span>
-              <input
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-                value={form.title}
-                onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))}
-                placeholder="Новый проект"
-              />
-            </label>
-            <label className="grid gap-1 text-sm">
-              <span className="text-neutral-300">Год</span>
-              <input
-                type="number"
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-                value={form.year}
-                onChange={(e) =>
-                  setForm((s) => ({ ...s, year: Number(e.target.value) || s.year }))
-                }
-              />
-            </label>
-            <label className="grid gap-1 text-sm">
-              <span className="text-neutral-300">Описание</span>
-              <textarea
-                className="min-h-[120px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-                value={form.description}
-                onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
-              />
-            </label>
-            <label className="grid gap-1 text-sm">
-              <span className="text-neutral-300">URL (опционально)</span>
-              <input
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-                value={form.url}
-                onChange={(e) => setForm((s) => ({ ...s, url: e.target.value }))}
-                placeholder="https://example.com"
-              />
-            </label>
-            <label className="grid gap-1 text-sm">
-              <span className="text-neutral-300">Рубрики</span>
-              <select
-                multiple
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-                value={form.categoryIds.map(String)}
-                onChange={(e) => {
-                  const options = Array.from(e.target.selectedOptions).map((o) =>
-                    Number(o.value),
-                  );
-                  setForm((s) => ({ ...s, categoryIds: options }));
-                }}
-              >
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="grid gap-1 text-sm">
-              <span className="text-neutral-300">Теги</span>
-              <select
-                multiple
-                className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-                value={form.tagIds.map(String)}
-                onChange={(e) => {
-                  const options = Array.from(e.target.selectedOptions).map((o) =>
-                    Number(o.value),
-                  );
-                  setForm((s) => ({ ...s, tagIds: options }));
-                }}
-              >
-                {tags.map((tag) => (
-                  <option key={tag.id} value={tag.id}>
-                    {tag.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="flex gap-3">
+      <div className="ds-admin-grid">
+        <div className="ds-admin-form-col">
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Короткое имя (slug)</label>
+            <input
+              className="ds-admin-input"
+              value={form.shortname}
+              onChange={(e) => setForm((s) => ({ ...s, shortname: e.target.value }))}
+              placeholder="my-project"
+            />
+          </div>
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Заголовок</label>
+            <input
+              className="ds-admin-input"
+              value={form.title}
+              onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))}
+              placeholder="Новый проект"
+            />
+          </div>
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Год</label>
+            <input
+              type="number"
+              className="ds-admin-input"
+              value={form.year}
+              onChange={(e) => setForm((s) => ({ ...s, year: Number(e.target.value) || s.year }))}
+            />
+          </div>
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Описание</label>
+            <textarea
+              className="ds-admin-textarea"
+              value={form.description}
+              onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
+            />
+          </div>
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">URL (опционально)</label>
+            <input
+              className="ds-admin-input"
+              value={form.url}
+              onChange={(e) => setForm((s) => ({ ...s, url: e.target.value }))}
+              placeholder="https://example.com"
+            />
+          </div>
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Категории</label>
+            <select
+              multiple
+              className="ds-admin-select"
+              value={form.categoryIds.map(String)}
+              onChange={(e) => {
+                const opts = Array.from(e.target.selectedOptions).map((o) => Number(o.value));
+                setForm((s) => ({ ...s, categoryIds: opts }));
+              }}
+            >
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="ds-admin-field" style={{ marginBottom: 0 }}>
+            <label className="ds-admin-label">Теги</label>
+            <select
+              multiple
+              className="ds-admin-select"
+              value={form.tagIds.map(String)}
+              onChange={(e) => {
+                const opts = Array.from(e.target.selectedOptions).map((o) => Number(o.value));
+                setForm((s) => ({ ...s, tagIds: opts }));
+              }}
+            >
+              {tags.map((tag) => (
+                <option key={tag.id} value={tag.id}>{tag.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="ds-admin-btn-group">
+            <button type="button" className="ds-admin-btn-primary" onClick={onSubmit} disabled={busy}>
+              {editingId ? 'Сохранить изменения' : 'Создать проект'}
+            </button>
+            {editingId && (
+              <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
+                Отменить
+              </button>
+            )}
+          </div>
+
+          {editingId && (
+            <div style={{ marginTop: '1.5rem', borderTop: '1px solid #2a2a2a', paddingTop: '1rem' }}>
               <button
                 type="button"
-                onClick={onSubmit}
-                disabled={busy}
-                className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="ds-admin-btn-secondary"
+                style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                onClick={() => setAccordionOpen((o) => !o)}
               >
-                {editingId ? 'Сохранить изменения' : 'Создать проект'}
+                <span>Изображения</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '0.7rem', color: '#666' }}>{editingProjectImages.length}</span>
+                  <span>{accordionOpen ? '▲' : '▼'}</span>
+                </span>
               </button>
-              {editingId && (
-                <button
-                  type="button"
-                  onClick={onReset}
-                  className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-                >
-                  Отменить
-                </button>
+
+              {accordionOpen && (
+                <div style={{ marginTop: '0.75rem' }}>
+                  {editingProjectImages.length > 0 && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '5px', marginBottom: '0.75rem' }}>
+                      {editingProjectImages.map((img) => (
+                        <AccordionThumb key={img.id} img={img} onDelete={onDeleteImage} busy={busy || uploading} />
+                      ))}
+                    </div>
+                  )}
+
+                  {uploadError && (
+                    <div className="ds-admin-error" style={{ marginBottom: '0.5rem' }}>{uploadError}</div>
+                  )}
+
+                  {uploading && uploadProgress && (
+                    <div style={{ fontSize: '0.7rem', color: '#888', marginBottom: '0.5rem' }}>
+                      Загружаем {uploadProgress.current} из {uploadProgress.total}...
+                    </div>
+                  )}
+
+                  <div
+                    style={{
+                      border: `1px dashed ${dragOver ? 'rgb(153,27,27)' : '#444'}`,
+                      borderRadius: '5px',
+                      padding: '1rem',
+                      textAlign: 'center',
+                      cursor: uploading ? 'not-allowed' : 'pointer',
+                      color: dragOver ? 'rgb(153,27,27)' : '#555',
+                      fontSize: '0.75rem',
+                      transition: 'border-color 0.15s, color 0.15s',
+                    }}
+                    onClick={() => !uploading && fileInputRef.current?.click()}
+                    onDragEnter={(e) => { e.preventDefault(); dragDepth.current += 1; setDragOver(true); }}
+                    onDragOver={(e) => { e.preventDefault(); }}
+                    onDragLeave={() => { dragDepth.current -= 1; if (dragDepth.current === 0) setDragOver(false); }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      dragDepth.current = 0;
+                      setDragOver(false);
+                      if (!uploading) handleUploadFiles(e.dataTransfer.files);
+                    }}
+                  >
+                    {uploading ? 'Загрузка...' : '⬆ Перетащите изображения или нажмите'}
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      if (e.target.files) handleUploadFiles(e.target.files);
+                      e.target.value = '';
+                    }}
+                  />
+                </div>
               )}
             </div>
-          </div>
+          )}
         </div>
 
-        <div className="space-y-3 overflow-y-auto rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-          {projects.length === 0 && (
-            <p className="text-sm text-neutral-500">Пока нет проектов</p>
-          )}
-          {projects.map((project) => (
-            <div
-              key={project.id}
-              className="rounded border border-neutral-800 bg-neutral-950 p-3"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="text-sm uppercase text-neutral-500">{project.shortname}</p>
-                  <h3 className="text-lg font-semibold">{project.title}</h3>
-                  <p className="text-sm text-neutral-400">{project.year}</p>
+        <div className="ds-admin-list-col">
+          {projects.length === 0 ? (
+            <div className="ds-admin-empty">Проектов пока нет</div>
+          ) : (
+            projects.map((project) => (
+              <div key={project.id} className="ds-admin-list-row">
+                <div style={{ minWidth: 0 }}>
+                  <p className="ds-admin-row-meta">{project.shortname} — {project.year}</p>
+                  <h3 className="ds-admin-row-title">{project.title}</h3>
+                  {project.description && (
+                    <p className="ds-admin-row-body">{project.description}</p>
+                  )}
+                  {project.categories?.length > 0 && (
+                    <div className="ds-admin-row-tags">
+                      {project.categories.map((cat) => (
+                        <span key={cat.id} className="ds-tag">{cat.name}</span>
+                      ))}
+                    </div>
+                  )}
+                  {project.tags?.length > 0 && (
+                    <div className="ds-admin-row-tags">
+                      {project.tags.map((tag) => (
+                        <span key={tag.id} className="ds-tag" style={{ borderColor: 'var(--ds-accent-dim)', color: 'var(--ds-accent)' }}>
+                          {tag.tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => onEdit(project)}
-                    className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-                  >
-                    Редактировать
+                <div className="ds-admin-row-actions">
+                  <button type="button" className="ds-admin-btn-secondary" onClick={() => onEdit(project)}>
+                    Ред.
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => onDelete(project.id)}
-                    className="rounded-md border border-red-500/70 px-3 py-1 text-sm text-red-200 transition hover:bg-red-500/10"
-                  >
-                    Удалить
+                  <button type="button" className="ds-admin-btn-danger" onClick={() => onDelete(project.id)}>
+                    Удал.
                   </button>
                 </div>
               </div>
-              <p className="mt-2 text-sm text-neutral-300">{project.description}</p>
-              {project.categories?.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {project.categories.map((cat) => (
-                    <span
-                      key={cat.id}
-                      className="rounded-full bg-neutral-800 px-2 py-1 text-xs text-neutral-200"
-                    >
-                      {cat.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-              {project.tags?.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag.id}
-                      className="rounded-full bg-red-800/20 px-2 py-1 text-xs text-red-200"
-                    >
-                      {tag.tag.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </>
@@ -868,95 +843,79 @@ type CategoriesViewProps = {
   busy: boolean;
 };
 
-function CategoriesView({
-  categories,
-  form,
-  setForm,
-  onSubmit,
-  onDelete,
-  onEdit,
-  editingId,
-  onReset,
-  busy,
-}: CategoriesViewProps) {
+function CategoriesView({ categories, form, setForm, onSubmit, onDelete, onEdit, editingId, onReset, busy }: CategoriesViewProps) {
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        <h2 className="text-xl font-semibold">Рубрики</h2>
-        <div className="mt-3 grid gap-3">
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Название</span>
+    <>
+      <div className="ds-admin-section-head">
+        <div>
+          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>
+            {editingId ? 'Редактирование' : 'Новая категория'}
+          </p>
+          <h2 className="ds-admin-section-title">Категории</h2>
+        </div>
+        {editingId && (
+          <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
+            Сбросить форму
+          </button>
+        )}
+      </div>
+
+      <div className="ds-admin-grid">
+        <div className="ds-admin-form-col">
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Название</label>
             <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+              className="ds-admin-input"
               value={form.name}
               onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
             />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Описание</span>
+          </div>
+          <div className="ds-admin-field" style={{ marginBottom: 0 }}>
+            <label className="ds-admin-label">Описание</label>
             <textarea
-              className="min-h-[80px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+              className="ds-admin-textarea"
               value={form.description}
               onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
             />
-          </label>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onSubmit}
-              disabled={busy}
-              className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+          </div>
+          <div className="ds-admin-btn-group">
+            <button type="button" className="ds-admin-btn-primary" onClick={onSubmit} disabled={busy}>
               {editingId ? 'Сохранить' : 'Создать'}
             </button>
             {editingId && (
-              <button
-                type="button"
-                onClick={onReset}
-                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-              >
+              <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
                 Отменить
               </button>
             )}
           </div>
         </div>
-      </div>
 
-      <div className="space-y-3 rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        {categories.length === 0 && (
-          <p className="text-sm text-neutral-500">Рубрик пока нет</p>
-        )}
-        {categories.map((category) => (
-          <div
-            key={category.id}
-            className="flex items-start justify-between gap-3 rounded border border-neutral-800 bg-neutral-950 p-3"
-          >
-            <div>
-              <p className="text-base font-semibold">{category.name}</p>
-              {category.description && (
-                <p className="text-sm text-neutral-400">{category.description}</p>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => onEdit(category)}
-                className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-              >
-                Редактировать
-              </button>
-              <button
-                type="button"
-                onClick={() => onDelete(category.id)}
-                className="rounded-md border border-red-500/70 px-3 py-1 text-sm text-red-200 transition hover:bg-red-500/10"
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
-        ))}
+        <div className="ds-admin-list-col">
+          {categories.length === 0 ? (
+            <div className="ds-admin-empty">Категорий пока нет</div>
+          ) : (
+            categories.map((category) => (
+              <div key={category.id} className="ds-admin-list-row">
+                <div>
+                  <h3 className="ds-admin-row-title">{category.name}</h3>
+                  {category.description && (
+                    <p className="ds-admin-row-body">{category.description}</p>
+                  )}
+                </div>
+                <div className="ds-admin-row-actions">
+                  <button type="button" className="ds-admin-btn-secondary" onClick={() => onEdit(category)}>
+                    Ред.
+                  </button>
+                  <button type="button" className="ds-admin-btn-danger" onClick={() => onDelete(category.id)}>
+                    Удал.
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -972,232 +931,179 @@ type TagsViewProps = {
   busy: boolean;
 };
 
-function TagsView({
-  tags,
-  form,
-  setForm,
-  onSubmit,
-  onDelete,
-  onEdit,
-  editingId,
-  onReset,
-  busy,
-}: TagsViewProps) {
+function TagsView({ tags, form, setForm, onSubmit, onDelete, onEdit, editingId, onReset, busy }: TagsViewProps) {
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        <h2 className="text-xl font-semibold">Теги</h2>
-        <div className="mt-3 grid gap-3">
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Название</span>
-          <input
-            className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+    <>
+      <div className="ds-admin-section-head">
+        <div>
+          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>
+            {editingId ? 'Редактирование' : 'Новый тег'}
+          </p>
+          <h2 className="ds-admin-section-title">Теги</h2>
+        </div>
+        {editingId && (
+          <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
+            Сбросить форму
+          </button>
+        )}
+      </div>
+
+      <div className="ds-admin-grid">
+        <div className="ds-admin-form-col">
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Название</label>
+            <input
+              className="ds-admin-input"
               value={form.name}
               onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
             />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Описание</span>
-          <textarea
-            className="min-h-[80px] rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+          </div>
+          <div className="ds-admin-field" style={{ marginBottom: 0 }}>
+            <label className="ds-admin-label">Описание</label>
+            <textarea
+              className="ds-admin-textarea"
               value={form.description}
               onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))}
             />
-          </label>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onSubmit}
-              disabled={busy}
-              className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+          </div>
+          <div className="ds-admin-btn-group">
+            <button type="button" className="ds-admin-btn-primary" onClick={onSubmit} disabled={busy}>
               {editingId ? 'Сохранить' : 'Создать'}
             </button>
             {editingId && (
-              <button
-                type="button"
-                onClick={onReset}
-                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-              >
+              <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
                 Отменить
               </button>
             )}
           </div>
         </div>
-      </div>
 
-      <div className="space-y-3 rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        {tags.length === 0 && <p className="text-sm text-neutral-500">Тегов пока нет</p>}
-        {tags.map((tag) => (
-          <div
-            key={tag.id}
-            className="flex items-start justify-between gap-3 rounded border border-neutral-800 bg-neutral-950 p-3"
-          >
-            <div>
-              <p className="text-base font-semibold">{tag.name}</p>
-              {tag.description && (
-                <p className="text-sm text-neutral-400">{tag.description}</p>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => onEdit(tag)}
-                className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-              >
-                Редактировать
-              </button>
-              <button
-                type="button"
-                onClick={() => onDelete(tag.id)}
-                className="rounded-md border border-red-500/70 px-3 py-1 text-sm text-red-200 transition hover:bg-red-500/10"
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
-        ))}
+        <div className="ds-admin-list-col">
+          {tags.length === 0 ? (
+            <div className="ds-admin-empty">Тегов пока нет</div>
+          ) : (
+            tags.map((tag) => (
+              <div key={tag.id} className="ds-admin-list-row">
+                <div>
+                  <h3 className="ds-admin-row-title">{tag.name}</h3>
+                  {tag.description && (
+                    <p className="ds-admin-row-body">{tag.description}</p>
+                  )}
+                </div>
+                <div className="ds-admin-row-actions">
+                  <button type="button" className="ds-admin-btn-secondary" onClick={() => onEdit(tag)}>
+                    Ред.
+                  </button>
+                  <button type="button" className="ds-admin-btn-danger" onClick={() => onDelete(tag.id)}>
+                    Удал.
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 type ImagesViewProps = {
   images: ImageWithProject[];
-  projects: { id: number; label: string }[];
-  form: { projectId: number; url: string; alt: string; order: number };
-  setForm: React.Dispatch<
-    React.SetStateAction<{ projectId: number; url: string; alt: string; order: number }>
-  >;
-  onSubmit: () => Promise<void>;
   onDelete: (id: number) => void;
-  onEdit: (image: ImageWithProject) => void;
-  editingId: number | null;
-  onReset: () => void;
   busy: boolean;
 };
 
-function ImagesView({
-  images,
-  projects,
-  form,
-  setForm,
-  onSubmit,
+function ImageThumb({
+  img,
   onDelete,
-  onEdit,
-  editingId,
-  onReset,
   busy,
-}: ImagesViewProps) {
+}: {
+  img: ImageWithProject;
+  onDelete: (id: number) => void;
+  busy: boolean;
+}) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        <h2 className="text-xl font-semibold">Изображения</h2>
-        <div className="mt-3 grid gap-3">
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Проект</span>
-            <select
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-              value={form.projectId}
-              onChange={(e) =>
-                setForm((s) => ({ ...s, projectId: Number(e.target.value) }))
-              }
-            >
-              <option value={0}>Выберите проект</option>
-              {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">URL</span>
-            <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-              value={form.url}
-              onChange={(e) => setForm((s) => ({ ...s, url: e.target.value }))}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Alt (опционально)</span>
-            <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-              value={form.alt}
-              onChange={(e) => setForm((s) => ({ ...s, alt: e.target.value }))}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Порядок</span>
-            <input
-              type="number"
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
-              value={form.order}
-              onChange={(e) =>
-                setForm((s) => ({ ...s, order: Number(e.target.value) || 0 }))
-              }
-            />
-          </label>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onSubmit}
-              disabled={busy || !form.projectId}
-              className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {editingId ? 'Сохранить' : 'Добавить'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                onClick={onReset}
-                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-              >
-                Отменить
-              </button>
-            )}
-          </div>
+    <div
+      style={{
+        position: 'relative',
+        aspectRatio: '1',
+        cursor: busy ? 'not-allowed' : 'pointer',
+        borderRadius: '5px',
+        overflow: 'hidden',
+        border: '1px solid #2a2a2a',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => !busy && onDelete(img.id)}
+      title={img.alt ?? img.url}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={img.url}
+        alt={img.alt ?? img.url}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+      {hovered && !busy && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(153, 27, 27, 0.80)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ color: 'white', fontSize: '1.25rem', fontWeight: 'bold' }}>✕</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ImagesView({ images, onDelete, busy }: ImagesViewProps) {
+  const grouped = useMemo(() => {
+    const map = new Map<number, { projectId: number; projectTitle: string; imgs: ImageWithProject[] }>();
+    for (const img of images) {
+      if (!map.has(img.projectId)) {
+        map.set(img.projectId, { projectId: img.projectId, projectTitle: img.project.title, imgs: [] });
+      }
+      map.get(img.projectId)!.imgs.push(img);
+    }
+    return Array.from(map.values());
+  }, [images]);
+
+  return (
+    <>
+      <div className="ds-admin-section-head">
+        <div>
+          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>Галерея</p>
+          <h2 className="ds-admin-section-title">Изображения</h2>
         </div>
       </div>
 
-      <div className="space-y-3 rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        {images.length === 0 && (
-          <p className="text-sm text-neutral-500">Изображений пока нет</p>
-        )}
-        {images.map((img) => (
-          <div
-            key={img.id}
-            className="flex flex-col gap-2 rounded border border-neutral-800 bg-neutral-950 p-3"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm uppercase text-neutral-500">#{img.id}</p>
-                <p className="text-base font-semibold">{img.project.title}</p>
-                <p className="text-sm text-neutral-400">Порядок: {img.order}</p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => onEdit(img)}
-                  className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-                >
-                  Редактировать
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onDelete(img.id)}
-                  className="rounded-md border border-red-500/70 px-3 py-1 text-sm text-red-200 transition hover:bg-red-500/10"
-                >
-                  Удалить
-                </button>
-              </div>
+      {grouped.length === 0 ? (
+        <div className="ds-admin-empty">Изображений пока нет</div>
+      ) : (
+        grouped.map((group) => (
+          <div key={group.projectId} style={{ marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+              <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgb(153,27,27)' }}>
+                {group.projectTitle}
+              </span>
+              <div style={{ flex: 1, height: '1px', background: '#2a2a2a' }} />
+              <span style={{ fontSize: '0.58rem', color: '#555' }}>{group.imgs.length} фото</span>
             </div>
-            <p className="break-all text-sm text-neutral-200">{img.url}</p>
-            {img.alt && <p className="text-sm text-neutral-400">alt: {img.alt}</p>}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '5px' }}>
+              {group.imgs.map((img) => (
+                <ImageThumb key={img.id} img={img} onDelete={onDelete} busy={busy} />
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
+        ))
+      )}
+    </>
   );
 }
 
@@ -1205,9 +1111,7 @@ type LinksViewProps = {
   links: LinkWithProject[];
   projects: { id: number; label: string }[];
   form: { projectId: number; name: string; href: string };
-  setForm: React.Dispatch<
-    React.SetStateAction<{ projectId: number; name: string; href: string }>
-  >;
+  setForm: React.Dispatch<React.SetStateAction<{ projectId: number; name: string; href: string }>>;
   onSubmit: () => Promise<void>;
   onDelete: (id: number) => void;
   onEdit: (link: LinkWithProject) => void;
@@ -1216,112 +1120,91 @@ type LinksViewProps = {
   busy: boolean;
 };
 
-function LinksView({
-  links,
-  projects,
-  form,
-  setForm,
-  onSubmit,
-  onDelete,
-  onEdit,
-  editingId,
-  onReset,
-  busy,
-}: LinksViewProps) {
+function LinksView({ links, projects, form, setForm, onSubmit, onDelete, onEdit, editingId, onReset, busy }: LinksViewProps) {
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
-      <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        <h2 className="text-xl font-semibold">Ссылки</h2>
-        <div className="mt-3 grid gap-3">
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Проект</span>
+    <>
+      <div className="ds-admin-section-head">
+        <div>
+          <p className="ds-eyebrow" style={{ fontSize: '0.50rem', letterSpacing: '0.22em' }}>
+            {editingId ? 'Редактирование' : 'Новая ссылка'}
+          </p>
+          <h2 className="ds-admin-section-title">Ссылки</h2>
+        </div>
+        {editingId && (
+          <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
+            Сбросить форму
+          </button>
+        )}
+      </div>
+
+      <div className="ds-admin-grid">
+        <div className="ds-admin-form-col">
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Проект</label>
             <select
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+              className="ds-admin-select"
               value={form.projectId}
-              onChange={(e) =>
-                setForm((s) => ({ ...s, projectId: Number(e.target.value) }))
-              }
+              onChange={(e) => setForm((s) => ({ ...s, projectId: Number(e.target.value) }))}
             >
               <option value={0}>Выберите проект</option>
               {projects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label}
-                </option>
+                <option key={p.id} value={p.id}>{p.label}</option>
               ))}
             </select>
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Название</span>
+          </div>
+          <div className="ds-admin-field">
+            <label className="ds-admin-label">Название</label>
             <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+              className="ds-admin-input"
               value={form.name}
               onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
             />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-neutral-300">Href</span>
+          </div>
+          <div className="ds-admin-field" style={{ marginBottom: 0 }}>
+            <label className="ds-admin-label">Href</label>
             <input
-              className="rounded-md border border-neutral-700 bg-neutral-800 px-3 py-2 text-white outline-none focus:border-red-700"
+              className="ds-admin-input"
               value={form.href}
               onChange={(e) => setForm((s) => ({ ...s, href: e.target.value }))}
               placeholder="https://example.com"
             />
-          </label>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onSubmit}
-              disabled={busy || !form.projectId}
-              className="rounded-md bg-[rgb(153,27,27)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
+          </div>
+          <div className="ds-admin-btn-group">
+            <button type="button" className="ds-admin-btn-primary" onClick={onSubmit} disabled={busy || !form.projectId}>
               {editingId ? 'Сохранить' : 'Добавить'}
             </button>
             {editingId && (
-              <button
-                type="button"
-                onClick={onReset}
-                className="rounded-md border border-neutral-700 px-4 py-2 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-              >
+              <button type="button" className="ds-admin-btn-secondary" onClick={onReset}>
                 Отменить
               </button>
             )}
           </div>
         </div>
-      </div>
 
-      <div className="space-y-3 rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-        {links.length === 0 && <p className="text-sm text-neutral-500">Ссылок пока нет</p>}
-        {links.map((link) => (
-          <div
-            key={link.id}
-            className="flex items-start justify-between gap-3 rounded border border-neutral-800 bg-neutral-950 p-3"
-          >
-            <div>
-              <p className="text-xs uppercase text-neutral-500">#{link.id}</p>
-              <p className="text-base font-semibold text-white">{link.name}</p>
-              <p className="text-sm text-neutral-300 break-all">{link.href}</p>
-              <p className="text-xs text-neutral-500 mt-1">{link.project.title}</p>
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => onEdit(link)}
-                className="rounded-md border border-neutral-700 px-3 py-1 text-sm text-neutral-200 transition hover:border-red-700 hover:text-white"
-              >
-                Редактировать
-              </button>
-              <button
-                type="button"
-                onClick={() => onDelete(link.id)}
-                className="rounded-md border border-red-500/70 px-3 py-1 text-sm text-red-200 transition hover:bg-red-500/10"
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
-        ))}
+        <div className="ds-admin-list-col">
+          {links.length === 0 ? (
+            <div className="ds-admin-empty">Ссылок пока нет</div>
+          ) : (
+            links.map((link) => (
+              <div key={link.id} className="ds-admin-list-row">
+                <div style={{ minWidth: 0 }}>
+                  <p className="ds-admin-row-meta">#{link.id} — {link.project.title}</p>
+                  <h3 className="ds-admin-row-title">{link.name}</h3>
+                  <p className="ds-admin-row-body" style={{ wordBreak: 'break-all' }}>{link.href}</p>
+                </div>
+                <div className="ds-admin-row-actions">
+                  <button type="button" className="ds-admin-btn-secondary" onClick={() => onEdit(link)}>
+                    Ред.
+                  </button>
+                  <button type="button" className="ds-admin-btn-danger" onClick={() => onDelete(link.id)}>
+                    Удал.
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
-
