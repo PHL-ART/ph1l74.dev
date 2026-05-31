@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Category, Image, Project, ProjectTag, Tag } from '@prisma/client';
 
 type EntityKey = 'projects' | 'categories' | 'tags' | 'images' | 'links';
@@ -394,6 +394,15 @@ export default function AdminPage() {
               editingId={editingProjectId}
               onReset={resetProjectForm}
               busy={busy}
+              editingProjectImages={
+                editingProjectId
+                  ? (projects.find((p) => p.id === editingProjectId)?.images ?? [])
+                  : []
+              }
+              onImagesChanged={async () => {
+                await Promise.all([fetchProjects(), fetchImages()]);
+              }}
+              onDeleteImage={deleteImage}
             />
           )}
 
@@ -474,9 +483,124 @@ type ProjectsViewProps = {
   editingId: number | null;
   onReset: () => void;
   busy: boolean;
+  editingProjectImages: import('@prisma/client').Image[];
+  onImagesChanged: () => Promise<void>;
+  onDeleteImage: (id: number) => void;
 };
 
-function ProjectsView({ projects, categories, tags, form, setForm, onSubmit, onEdit, onDelete, editingId, onReset, busy }: ProjectsViewProps) {
+function AccordionThumb({
+  img,
+  onDelete,
+  busy,
+}: {
+  img: { id: number; url: string; alt: string | null };
+  onDelete: (id: number) => void;
+  busy: boolean;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      style={{
+        position: 'relative',
+        aspectRatio: '1',
+        cursor: busy ? 'not-allowed' : 'pointer',
+        borderRadius: '4px',
+        overflow: 'hidden',
+        border: '1px solid #2a2a2a',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => !busy && onDelete(img.id)}
+      title={img.alt ?? img.url}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={img.url}
+        alt={img.alt ?? img.url}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+      {hovered && !busy && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(153, 27, 27, 0.80)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ color: 'white', fontSize: '1rem', fontWeight: 'bold' }}>✕</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProjectsView({
+  projects, categories, tags, form, setForm, onSubmit, onEdit, onDelete,
+  editingId, onReset, busy,
+  editingProjectImages, onImagesChanged, onDeleteImage,
+}: ProjectsViewProps) {
+  const [accordionOpen, setAccordionOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setAccordionOpen(false);
+    setUploadError(null);
+  }, [editingId]);
+
+  const handleUploadFiles = async (files: FileList | File[]) => {
+    const arr = Array.from(files).filter((f) => f.type.startsWith('image/'));
+    if (!arr.length || !editingId) return;
+    setUploading(true);
+    setUploadError(null);
+    setUploadProgress({ current: 0, total: arr.length });
+    try {
+      for (let i = 0; i < arr.length; i++) {
+        setUploadProgress({ current: i + 1, total: arr.length });
+        const file = arr[i];
+
+        const presignRes = await fetch('/api/admin/upload/presign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: file.name, contentType: file.type, projectId: editingId }),
+        });
+        if (!presignRes.ok) throw new Error('Не удалось получить ссылку для загрузки');
+        const { uploadUrl, publicUrl } = await presignRes.json() as { uploadUrl: string; publicUrl: string };
+
+        const s3Res = await fetch(uploadUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': file.type },
+          body: file,
+        });
+        if (!s3Res.ok) throw new Error('Ошибка загрузки в хранилище');
+
+        const dbRes = await fetch('/api/admin/images', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectId: editingId,
+            url: publicUrl,
+            alt: file.name,
+            order: editingProjectImages.length + i,
+          }),
+        });
+        if (!dbRes.ok) throw new Error('Ошибка сохранения изображения');
+      }
+      await onImagesChanged();
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Ошибка загрузки');
+    } finally {
+      setUploading(false);
+      setUploadProgress(null);
+    }
+  };
+
   return (
     <>
       <div className="ds-admin-section-head">
@@ -581,6 +705,80 @@ function ProjectsView({ projects, categories, tags, form, setForm, onSubmit, onE
               </button>
             )}
           </div>
+
+          {editingId && (
+            <div style={{ marginTop: '1.5rem', borderTop: '1px solid #2a2a2a', paddingTop: '1rem' }}>
+              <button
+                type="button"
+                className="ds-admin-btn-secondary"
+                style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                onClick={() => setAccordionOpen((o) => !o)}
+              >
+                <span>Изображения</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '0.7rem', color: '#666' }}>{editingProjectImages.length}</span>
+                  <span>{accordionOpen ? '▲' : '▼'}</span>
+                </span>
+              </button>
+
+              {accordionOpen && (
+                <div style={{ marginTop: '0.75rem' }}>
+                  {editingProjectImages.length > 0 && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '5px', marginBottom: '0.75rem' }}>
+                      {editingProjectImages.map((img) => (
+                        <AccordionThumb key={img.id} img={img} onDelete={onDeleteImage} busy={busy || uploading} />
+                      ))}
+                    </div>
+                  )}
+
+                  {uploadError && (
+                    <div className="ds-admin-error" style={{ marginBottom: '0.5rem' }}>{uploadError}</div>
+                  )}
+
+                  {uploading && uploadProgress && (
+                    <div style={{ fontSize: '0.7rem', color: '#888', marginBottom: '0.5rem' }}>
+                      Загружаем {uploadProgress.current} из {uploadProgress.total}...
+                    </div>
+                  )}
+
+                  <div
+                    style={{
+                      border: `1px dashed ${dragOver ? 'rgb(153,27,27)' : '#444'}`,
+                      borderRadius: '5px',
+                      padding: '1rem',
+                      textAlign: 'center',
+                      cursor: uploading ? 'not-allowed' : 'pointer',
+                      color: dragOver ? 'rgb(153,27,27)' : '#555',
+                      fontSize: '0.75rem',
+                      transition: 'border-color 0.15s, color 0.15s',
+                    }}
+                    onClick={() => !uploading && fileInputRef.current?.click()}
+                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDragOver(false);
+                      if (!uploading) handleUploadFiles(e.dataTransfer.files);
+                    }}
+                  >
+                    {uploading ? 'Загрузка...' : '⬆ Перетащите изображения или нажмите'}
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      if (e.target.files) handleUploadFiles(e.target.files);
+                      e.target.value = '';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="ds-admin-list-col">
