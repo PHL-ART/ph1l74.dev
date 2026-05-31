@@ -577,7 +577,7 @@ function ProjectsView({
 
         const s3Res = await fetch(uploadUrl, {
           method: 'PUT',
-          headers: { 'Content-Type': file.type },
+          headers: { 'Content-Type': file.type, 'x-amz-acl': 'public-read' },
           body: file,
         });
         if (!s3Res.ok) throw new Error('Ошибка загрузки в хранилище');
