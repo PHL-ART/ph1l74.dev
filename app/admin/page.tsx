@@ -839,7 +839,7 @@ function ImageThumb({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={img.url}
-        alt={img.alt ?? ''}
+        alt={img.alt ?? img.url}
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
       />
       {hovered && !busy && (
@@ -862,10 +862,10 @@ function ImageThumb({
 
 function ImagesView({ images, onDelete, busy }: ImagesViewProps) {
   const grouped = useMemo(() => {
-    const map = new Map<number, { projectTitle: string; imgs: ImageWithProject[] }>();
+    const map = new Map<number, { projectId: number; projectTitle: string; imgs: ImageWithProject[] }>();
     for (const img of images) {
       if (!map.has(img.projectId)) {
-        map.set(img.projectId, { projectTitle: img.project.title, imgs: [] });
+        map.set(img.projectId, { projectId: img.projectId, projectTitle: img.project.title, imgs: [] });
       }
       map.get(img.projectId)!.imgs.push(img);
     }
@@ -885,7 +885,7 @@ function ImagesView({ images, onDelete, busy }: ImagesViewProps) {
         <div className="ds-admin-empty">Изображений пока нет</div>
       ) : (
         grouped.map((group) => (
-          <div key={group.projectTitle} style={{ marginBottom: '2rem' }}>
+          <div key={group.projectId} style={{ marginBottom: '2rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
               <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgb(153,27,27)' }}>
                 {group.projectTitle}
