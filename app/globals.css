@@ -1749,6 +1749,126 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 .ds-admin-select[multiple] { min-height: 80px; padding: 0.3rem 0; }
 .ds-admin-textarea         { resize: vertical; min-height: 90px; }
 
+/* ── MultiCombobox ─────────────────────────────────── */
+.cmb-wrap { position: relative; width: 100%; }
+
+.cmb-box {
+  width: 100%;
+  background: var(--ds-bg);
+  border: 1px solid var(--ds-border);
+  border-radius: 0;
+  padding: 0.3rem 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+  min-height: 2.4rem;
+  cursor: text;
+  transition: border-color 0.2s var(--ds-ease-out);
+}
+
+.cmb-box:focus-within { border-color: var(--ds-accent); }
+
+.cmb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--ds-accent-dim);
+  border: 1px solid var(--ds-accent);
+  color: var(--ds-accent);
+  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.35rem 0.15rem 0.5rem;
+  line-height: 1.4;
+  user-select: none;
+}
+
+.cmb-chip-x {
+  cursor: pointer;
+  opacity: 0.5;
+  font-size: 1rem;
+  line-height: 1;
+  transition: opacity 0.15s;
+}
+
+.cmb-chip-x:hover { opacity: 1; }
+
+.cmb-input {
+  flex: 1;
+  min-width: 6rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--ds-text);
+  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+  font-size: 0.82rem;
+  padding: 0.2rem 0.3rem;
+  caret-color: var(--ds-accent);
+}
+
+.cmb-input::placeholder { color: var(--ds-text-2); opacity: 0.5; }
+
+.cmb-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-border);
+  border-radius: 0;
+  z-index: 100;
+  max-height: 13rem;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+.cmb-option {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+  color: var(--ds-text-2);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.cmb-option:hover,
+.cmb-option--focused {
+  background: var(--ds-surface-2);
+  color: var(--ds-text);
+}
+
+.cmb-option--selected {
+  color: var(--ds-text-3);
+  cursor: default;
+}
+
+.cmb-option--selected::after {
+  content: ' ✓';
+  color: var(--ds-accent);
+  font-size: 0.7rem;
+}
+
+.cmb-option--create {
+  border-top: 1px solid var(--ds-border);
+  color: var(--ds-accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cmb-option--create:hover,
+.cmb-option--create.cmb-option--focused {
+  background: var(--ds-accent-dim);
+  color: var(--ds-accent);
+}
+
+.cmb-option--loading {
+  opacity: 0.45;
+  pointer-events: none;
+}
+/* ─────────────────────────────────────────────────── */
+
 /* Buttons */
 .ds-admin-btn-primary,
 .ds-admin-btn-secondary,
