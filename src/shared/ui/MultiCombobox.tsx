@@ -80,6 +80,8 @@ export function MultiCombobox({
       const created = await onCreateNew(name);
       onChange([...value, created.id]);
       setInputValue('');
+    } catch (err) {
+      console.error('MultiCombobox: failed to create item', err);
     } finally {
       setCreating(false);
       inputRef.current?.focus();
