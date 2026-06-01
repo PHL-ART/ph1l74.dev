@@ -673,6 +673,7 @@ function ProjectsView({
           <div className="ds-admin-field">
             <label className="ds-admin-label">Категории</label>
             <MultiCombobox
+              key={`cat-${editingId ?? 'new'}`}
               value={form.categoryIds}
               onChange={(ids) => setForm((s) => ({ ...s, categoryIds: ids }))}
               options={categories}
@@ -693,6 +694,7 @@ function ProjectsView({
           <div className="ds-admin-field" style={{ marginBottom: 0 }}>
             <label className="ds-admin-label">Теги</label>
             <MultiCombobox
+              key={`tag-${editingId ?? 'new'}`}
               value={form.tagIds}
               onChange={(ids) => setForm((s) => ({ ...s, tagIds: ids }))}
               options={tags}
