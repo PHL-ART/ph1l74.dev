@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Category, Image, Project, ProjectTag, Tag } from '@prisma/client';
+import { MultiCombobox } from '@/shared/ui';
 
 type EntityKey = 'projects' | 'categories' | 'tags' | 'images' | 'links';
 
@@ -386,6 +387,8 @@ export default function AdminPage() {
               projects={projects}
               categories={categories}
               tags={tags}
+              setCategories={setCategories}
+              setTags={setTags}
               form={projectForm}
               setForm={setProjectForm}
               onSubmit={submitProject}
@@ -475,6 +478,8 @@ type ProjectsViewProps = {
   projects: ProjectWithRelations[];
   categories: Category[];
   tags: Tag[];
+  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
+  setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
   form: { shortname: string; title: string; year: number; description: string; url: string; categoryIds: number[]; tagIds: number[] };
   setForm: React.Dispatch<React.SetStateAction<{ shortname: string; title: string; year: number; description: string; url: string; categoryIds: number[]; tagIds: number[] }>>;
   onSubmit: () => Promise<void>;
@@ -538,7 +543,7 @@ function AccordionThumb({
 }
 
 function ProjectsView({
-  projects, categories, tags, form, setForm, onSubmit, onEdit, onDelete,
+  projects, categories, tags, setCategories, setTags, form, setForm, onSubmit, onEdit, onDelete,
   editingId, onReset, busy,
   editingProjectImages, onImagesChanged, onDeleteImage,
 }: ProjectsViewProps) {
@@ -667,35 +672,43 @@ function ProjectsView({
           </div>
           <div className="ds-admin-field">
             <label className="ds-admin-label">Категории</label>
-            <select
-              multiple
-              className="ds-admin-select"
-              value={form.categoryIds.map(String)}
-              onChange={(e) => {
-                const opts = Array.from(e.target.selectedOptions).map((o) => Number(o.value));
-                setForm((s) => ({ ...s, categoryIds: opts }));
+            <MultiCombobox
+              value={form.categoryIds}
+              onChange={(ids) => setForm((s) => ({ ...s, categoryIds: ids }))}
+              options={categories}
+              onCreateNew={async (name) => {
+                const res = await fetch('/api/admin/categories', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ name }),
+                });
+                if (!res.ok) throw new Error('Не удалось создать категорию');
+                const created = await res.json();
+                setCategories((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+                return created;
               }}
-            >
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
+              placeholder="Поиск или создать категорию..."
+            />
           </div>
           <div className="ds-admin-field" style={{ marginBottom: 0 }}>
             <label className="ds-admin-label">Теги</label>
-            <select
-              multiple
-              className="ds-admin-select"
-              value={form.tagIds.map(String)}
-              onChange={(e) => {
-                const opts = Array.from(e.target.selectedOptions).map((o) => Number(o.value));
-                setForm((s) => ({ ...s, tagIds: opts }));
+            <MultiCombobox
+              value={form.tagIds}
+              onChange={(ids) => setForm((s) => ({ ...s, tagIds: ids }))}
+              options={tags}
+              onCreateNew={async (name) => {
+                const res = await fetch('/api/admin/tags', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ name }),
+                });
+                if (!res.ok) throw new Error('Не удалось создать тег');
+                const created = await res.json();
+                setTags((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+                return created;
               }}
-            >
-              {tags.map((tag) => (
-                <option key={tag.id} value={tag.id}>{tag.name}</option>
-              ))}
-            </select>
+              placeholder="Поиск или создать тег..."
+            />
           </div>
           <div className="ds-admin-btn-group">
             <button type="button" className="ds-admin-btn-primary" onClick={onSubmit} disabled={busy}>
