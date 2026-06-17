@@ -1,30 +1,47 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { MainLayout } from "@/shared/ui/MainLayout";
-import { PageNavigation } from "@/shared/ui/PageNavigation";
+import { ErrorProvider } from "@/shared/lib/error-context";
+import { Syne, Bricolage_Grotesque, JetBrains_Mono, Unbounded } from "next/font/google";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const syne = Syne({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-syne",
+  display: "swap",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
+
+const unbounded = Unbounded({
+  subsets: ["latin", "cyrillic"],
+  weight: ["900"],
+  variable: "--font-unbounded",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Filat Astakhov',
-    default: 'Filat Astakhov',
+    template: "%s | Filat Astakhov",
+    default: "Filat Astakhov",
   },
   openGraph: {
     title: "Filat Astakhov",
-    description: 'The official site of frontend developer Filat Astkahov'
+    description: "The official site of frontend developer Filat Astakhov",
   },
-  description: 'The official site of frontend developer Filat Astkahov',
+  description: "The official site of frontend developer Filat Astakhov",
 };
 
 export default function RootLayout({
@@ -32,13 +49,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen max-h-screen w-screen overflow-hidden`}
+    <html
+      lang="en"
+      className={`dark ${syne.variable} ${bricolage.variable} ${jetbrainsMono.variable} ${unbounded.variable}`}
+      style={{ colorScheme: "dark" }}
+    >
+<body
+        className="antialiased"
+        style={{ fontFamily: "var(--font-bricolage, 'Helvetica Neue', sans-serif)" }}
       >
-        <MainLayout header={<PageNavigation />}>{children}</MainLayout>
+        <ErrorProvider>
+          <MainLayout>{children}</MainLayout>
+        </ErrorProvider>
       </body>
     </html>
   );

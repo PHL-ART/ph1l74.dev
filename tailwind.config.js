@@ -1,11 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 
 module.exports = {
-  darkMode: ["class"],
+  darkMode: "class",
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
-    "./pages/**/*.{ts,tsx}",
+    "./src/pages/**/*.{ts,tsx}",
     "./shared/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
@@ -53,6 +53,7 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        brand: "hsl(var(--brand))",
       },
       borderRadius: {
         lg: "var(--radius)",
