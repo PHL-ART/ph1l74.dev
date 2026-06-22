@@ -1,10 +1,10 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens ───────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Design Tokens в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 :root {
-  /* Shadcn/radix tokens — kept for admin panel */
+  /* Shadcn/radix tokens вЂ” kept for admin panel */
   --background: 0 0% 0%;
   --foreground: 0 0% 98%;
   --card: 0 0% 3.9%;
@@ -27,7 +27,7 @@
   --radius: 0.5rem;
   --brand: 0 72% 31%;
 
-  /* Design system — Dark Editorial / Swiss Brutalism */
+  /* Design system вЂ” Dark Editorial / Swiss Brutalism */
   --ds-bg:           oklch(5.5% 0.006 27);
   --ds-surface:      oklch(8.5% 0.005 27);
   --ds-surface-2:    oklch(12%  0.005 27);
@@ -45,7 +45,7 @@
   --ds-px:           clamp(1.5rem, 4vw, 4.5rem);
 }
 
-/* ─── Base ────────────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Base в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 html {
   color-scheme: dark;
   background: var(--ds-bg);
@@ -73,7 +73,7 @@ body {
 a   { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 
-/* ─── Page Layout ─────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Page Layout в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-page {
   position: relative;
   z-index: 1;
@@ -83,7 +83,7 @@ img { max-width: 100%; display: block; }
   flex-direction: column;
 }
 
-/* ─── Site Header ─────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Site Header в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-site-header {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -180,7 +180,7 @@ img { max-width: 100%; display: block; }
   transition: transform 0.32s var(--ds-ease-out), opacity 0.2s, background 0.2s;
 }
 
-/* ─── Site Footer ─────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Site Footer в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-site-footer {
   margin-top: auto;
   border-top: 1px solid var(--ds-border);
@@ -200,7 +200,7 @@ img { max-width: 100%; display: block; }
   color: var(--ds-text-2);
 }
 
-/* ─── Shared: Eyebrow ─────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Shared: Eyebrow в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-eyebrow {
   font-family: var(--font-jetbrains-mono, 'JetBrains Mono', 'Courier New', monospace);
   font-size: 0.56rem;
@@ -221,7 +221,7 @@ img { max-width: 100%; display: block; }
   flex-shrink: 0;
 }
 
-/* ─── Hero Section ────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Hero Section в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-hero {
   flex: 1;
   display: flex;
@@ -268,7 +268,7 @@ img { max-width: 100%; display: block; }
   50%       { opacity: 0.35; transform: scale(0.75); }
 }
 
-/* Name display — Big Shoulders Display */
+/* Name display вЂ” Big Shoulders Display */
 .ds-hero-name {
   font-family: var(--font-unbounded, 'Impact', sans-serif);
   font-weight: 900;
@@ -342,7 +342,7 @@ img { max-width: 100%; display: block; }
   letter-spacing: -0.04em;
 }
 
-/* ─── Home Nav Cards ──────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Home Nav Cards в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-home-nav {
   border-top: 1px solid var(--ds-border);
 }
@@ -393,7 +393,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-home-nav-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: 2.1rem;
   letter-spacing: -0.022em;
@@ -423,7 +423,7 @@ img { max-width: 100%; display: block; }
   color: var(--ds-accent);
 }
 
-/* ─── Responsive ──────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Responsive в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 @media (max-width: 900px) {
   .ds-hero-meta        { grid-template-columns: 1fr 1fr; }
   .ds-home-nav-grid    { grid-template-columns: 1fr; }
@@ -502,7 +502,7 @@ img { max-width: 100%; display: block; }
   }
 }
 
-/* ─── Shared Tag ──────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Shared Tag в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-tag {
   font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
   font-size: 0.55rem;
@@ -530,7 +530,7 @@ img { max-width: 100%; display: block; }
   padding: 2.5rem 0 4rem;
 }
 
-/* ─── About Page ──────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ About Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-about-layout {
   flex: 1;
   display: grid;
@@ -548,7 +548,7 @@ img { max-width: 100%; display: block; }
 .ds-about-eyebrow { margin-bottom: 2.5rem; }
 
 .ds-about-heading {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: clamp(3.5rem, 8vw, 8rem);
   letter-spacing: -0.028em;
@@ -601,7 +601,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-stat-num {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: 2.6rem;
   letter-spacing: -0.03em;
@@ -687,7 +687,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-about-photo-initials {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: 7rem;
   letter-spacing: -0.06em;
@@ -732,7 +732,7 @@ img { max-width: 100%; display: block; }
   .ds-stat-num                { font-size: 2rem; }
 }
 
-/* ─── Projects Page ───────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Projects Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-projects-wrap {
   padding: 0 var(--ds-px);
   flex: 1;
@@ -756,7 +756,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-page-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: clamp(4rem, 11vw, 11rem);
   letter-spacing: -0.025em;
@@ -792,7 +792,7 @@ img { max-width: 100%; display: block; }
 .ds-projects-list { list-style: none; }
 .ds-projects-list > li { position: relative; }
 
-/* ─── Projects Filter Nav ─────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Projects Filter Nav в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-projects-filter-nav {
   position: sticky;
   top: var(--ds-header-h);
@@ -869,7 +869,7 @@ img { max-width: 100%; display: block; }
 }
 .ds-pfn-left .ds-pfn-btn { padding-left: 0; }
 
-/* Stretched-link overlay — covers the whole <li> card */
+/* Stretched-link overlay вЂ” covers the whole <li> card */
 .ds-project-item-link {
   position: absolute;
   inset: 0;
@@ -882,7 +882,7 @@ img { max-width: 100%; display: block; }
   outline-offset: -1.5px;
 }
 
-/* Card layout — sits above the stretched link so content is readable,
+/* Card layout вЂ” sits above the stretched link so content is readable,
    but tag buttons (z-index:2) stay clickable over the overlay */
 .ds-project-item {
   display: grid;
@@ -956,7 +956,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-project-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: clamp(1.6rem, 3.8vw, 3.2rem);
   letter-spacing: -0.022em;
@@ -1011,7 +1011,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-project-title       { font-size: clamp(1.35rem, 5.5vw, 2rem); }
 }
 
-/* ─── Contacts Page ───────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Contacts Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-contacts-page {
   flex: 1;
   display: grid;
@@ -1031,7 +1031,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 .ds-contacts-eyebrow { margin-bottom: 2.5rem; }
 
 .ds-contacts-hero-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: clamp(3.5rem, 7.5vw, 8rem);
   letter-spacing: -0.028em;
@@ -1073,7 +1073,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-contacts-email-link {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: clamp(0.95rem, 1.8vw, 1.4rem);
   letter-spacing: -0.01em;
@@ -1088,7 +1088,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   position: absolute;
   bottom: 2rem;
   left: var(--ds-px);
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: clamp(8rem, 18vw, 22rem);
   line-height: 1;
@@ -1165,7 +1165,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 .ds-contact-row:hover .ds-contact-icon { color: var(--ds-accent); }
 
 .ds-contact-platform {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: 1.15rem;
   letter-spacing: -0.015em;
@@ -1235,7 +1235,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-contact-platform    { font-size: 1rem; }
 }
 
-/* ─── Project Detail Page ─────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Project Detail Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-project-detail {
   flex: 1;
   display: flex;
@@ -1441,7 +1441,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   justify-content: space-between;
   text-decoration: none;
   color: var(--ds-text);
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: -0.01em;
@@ -1553,7 +1553,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-project-desc-col { padding-top: 3rem; padding-bottom: 3rem; }
 }
 
-/* ─── Utilities ───────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Utilities в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 @keyframes shimmer {
   0%   { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -1567,7 +1567,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   }
 }
 
-/* ─── Admin Panel ─────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Admin Panel в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 
 .ds-admin {
   flex: 1;
@@ -1680,7 +1680,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-admin-section-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: 1.6rem;
   letter-spacing: -0.022em;
@@ -1729,7 +1729,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   border-radius: 0;
   color: var(--ds-text);
   padding: 0.6rem 0.75rem;
-  font-family: var(--font-bricolage, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-unbounded, sans-serif);
   font-size: 0.88rem;
   line-height: 1.5;
   outline: none;
@@ -1749,7 +1749,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 .ds-admin-select[multiple] { min-height: 80px; padding: 0.3rem 0; }
 .ds-admin-textarea         { resize: vertical; min-height: 90px; }
 
-/* ── MultiCombobox ─────────────────────────────────── */
+/* в”Ђв”Ђ MultiCombobox в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .cmb-wrap { position: relative; width: 100%; }
 
 .cmb-box {
@@ -1844,7 +1844,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .cmb-option--selected::after {
-  content: ' ✓';
+  content: ' вњ“';
   color: var(--ds-accent);
   font-size: 0.7rem;
 }
@@ -1867,7 +1867,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   opacity: 0.45;
   pointer-events: none;
 }
-/* ─────────────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 
 /* Buttons */
 .ds-admin-btn-primary,
@@ -1942,7 +1942,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-admin-row-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: -0.015em;
