@@ -49,7 +49,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
           {title}
         </div>
         <img src={logo} width={48} height={48} style={{ position: 'absolute', bottom: 56, left: 80 }} />
-        <span style={{ position: 'absolute', bottom: 80, right: 80, fontFamily: 'monospace', fontSize: 13, color: '#444', letterSpacing: '2px' }}>
+        <span style={{ position: 'absolute', bottom: 60, right: 80, fontFamily: 'monospace', fontSize: 13, color: '#444', letterSpacing: '2px' }}>
           PH1L74.DEV
         </span>
       </div>
