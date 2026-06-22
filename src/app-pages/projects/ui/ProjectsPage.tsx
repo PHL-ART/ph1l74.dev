@@ -74,10 +74,10 @@ export const ProjectsPage = () => {
   return (
     <main className="ds-projects-wrap">
       <div className="ds-page-header">
-        <h1 className="ds-page-title" data-num="01 / Work">Projects</h1>
+        <h1 className="ds-page-title" data-num="01 / Работа">Проекты</h1>
         <div className="ds-page-header-meta">
-          <div>Selected work</div>
-          <div>2020 – {new Date().getFullYear()}</div>
+          <div>ОТБОРНЫЕ ПРОЕКТЫ</div>
+          <div>2014 – {new Date().getFullYear()}</div>
         </div>
       </div>
 

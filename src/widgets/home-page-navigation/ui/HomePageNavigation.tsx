@@ -2,21 +2,21 @@ import Link from "next/link";
 
 const cards = [
   {
-    num: "01 / Work",
-    title: "Projects",
-    desc: "Selected projects and experiments built over the years",
+    num: "01 / Работы",
+    title: "Проекты",
+    desc: "Избранные проекты и разносторонние эксперименты, созданные за эти годы",
     href: "/projects",
   },
   {
-    num: "02 / Story",
-    title: "About",
-    desc: "Background, skills, and what drives my work",
+    num: "02 / История",
+    title: "Обо мне",
+    desc: "Опыт, навыки и то, что мной движет",
     href: "/about",
   },
   {
-    num: "03 / Connect",
-    title: "Contacts",
-    desc: "Every channel where you can reach or follow me",
+    num: "03 / Связь",
+    title: "Контакты",
+    desc: "Способы со мной связаться",
     href: "/contacts",
   },
 ];

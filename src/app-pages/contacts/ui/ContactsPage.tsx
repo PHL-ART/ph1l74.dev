@@ -114,10 +114,10 @@ export const ContactsPage = () => {
     <main className="ds-contacts-page">
       {/* ── Left: heading + email CTA ── */}
       <section className="ds-contacts-left">
-        <div className="ds-contacts-eyebrow ds-eyebrow">03 / Контакты</div>
+        <div className="ds-contacts-eyebrow ds-eyebrow">03 / На связи</div>
 
         <h1 className="ds-contacts-hero-title">
-          На&nbsp;связи
+          КОНТАКТЫ
           <span className="ghost">
             <span className="dot">.</span>
           </span>

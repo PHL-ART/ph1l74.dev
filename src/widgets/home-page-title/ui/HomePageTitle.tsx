@@ -18,7 +18,7 @@ export const HomePageTitle = () => {
         <div className="ds-hero-meta-item">
           <div className="ds-hero-meta-label">Специализация</div>
           <div className="ds-hero-meta-value">
-            Интерактивные интерфейсы<br />&amp; веб-опыт
+            Веб-разработка &amp; <br /> интерактивные интерфейсы
           </div>
         </div>
         <div className="ds-hero-meta-item">
@@ -28,8 +28,8 @@ export const HomePageTitle = () => {
           </div>
         </div>
         <div className="ds-hero-meta-item">
-          <div className="ds-hero-meta-label">В разработке с</div>
-          <div className="ds-hero-meta-value">2020</div>
+          <div className="ds-hero-meta-label">В коммерческой разработке</div>
+          <div className="ds-hero-meta-value">с 2014 года</div>
         </div>
       </div>
 

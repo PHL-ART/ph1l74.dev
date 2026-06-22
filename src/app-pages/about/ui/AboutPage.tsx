@@ -23,17 +23,16 @@ export const AboutPage = async () => {
     <main className="ds-about-layout">
       {/* ── Left: text content ── */}
       <section className="ds-about-left">
-        <div className="ds-about-eyebrow ds-eyebrow">02 / Обо мне</div>
+        <div className="ds-about-eyebrow ds-eyebrow">02 / История</div>
 
         <h1 className="ds-about-heading">
-          Обо
-          <span className="ds-about-heading-ghost">мне</span>
+          <span>Обо</span> <span className="ds-about-heading-ghost">мне</span>
         </h1>
 
         <div className="ds-about-body">
           <p>
             Привет, я <strong>Филат Астахов</strong> — фронтенд разработчик, создающий красивые
-            и производительные интерфейсы. С 2020 года разрабатываю веб-проекты в сфере
+            и производительные интерфейсы. С 2014 года разрабатываю веб-проекты в сфере
             фриланса и продуктовых команд.
           </p>
           <p>
