@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import prisma from '@/shared/api/database/prisma';
+import { ProjectGallery } from '@/features/project-gallery';
 
 export default async function ProjectPage({
   params,
@@ -67,6 +68,8 @@ export default async function ProjectPage({
         </div>
         <span className="ds-project-hero-ghost" aria-hidden="true">{ghostChar}</span>
       </header>
+
+      <ProjectGallery images={project.images} />
 
       {/* Body */}
       <div className="ds-project-body">
