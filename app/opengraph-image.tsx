@@ -34,6 +34,7 @@ export default function Image() {
             color: '#f0f0f0',
             lineHeight: 1,
             letterSpacing: '-0.02em',
+            whiteSpace: 'pre-wrap',
           }}
         >
           {'Филат\nАстахов'}
