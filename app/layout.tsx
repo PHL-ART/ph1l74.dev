@@ -29,17 +29,17 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Filat Astakhov',
-    default: 'Filat Astakhov',
+    template: '%s | Филат Астахов',
+    default: 'Филат Астахов',
   },
-  description: 'The official site of frontend developer Filat Astakhov',
+  description: 'Официальный сайт фронтенд разработчика Филата Астахова',
   icons: {
     icon: '/assets/icons/fa-logo.svg',
     shortcut: '/assets/icons/fa-logo.svg',
   },
   openGraph: {
-    title: 'Filat Astakhov',
-    description: 'The official site of frontend developer Filat Astakhov',
+    title: 'Филат Астахов',
+    description: 'Официальный сайт фронтенд разработчика Филата Астахова',
   },
 };
 
@@ -50,7 +50,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ru"
       className={`dark ${widock.variable} ${unbounded.variable} ${jetbrainsMono.variable}`}
       style={{ colorScheme: 'dark' }}
     >

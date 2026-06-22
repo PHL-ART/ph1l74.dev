@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 
 const navLinks = [
-  { title: 'Home',     href: '/' },
-  { title: 'Projects', href: '/projects' },
-  { title: 'About',    href: '/about' },
-  { title: 'Contacts', href: '/contacts' },
+  { title: 'В начало',  href: '/' },
+  { title: 'Проекты',   href: '/projects' },
+  { title: 'Обо мне',   href: '/about' },
+  { title: 'Контакты',  href: '/contacts' },
 ];
 
 export const Header: FC = () => {

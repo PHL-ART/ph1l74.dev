@@ -33,7 +33,7 @@ export default async function ProjectPage({
       <div className="ds-project-nav">
         <Link href="/projects" className="ds-project-back">
           <span aria-hidden="true">←</span>
-          Projects
+          Проекты
         </Link>
         <span className="ds-project-nav-meta">
           {project.year}
@@ -71,7 +71,7 @@ export default async function ProjectPage({
       {/* Body */}
       <div className="ds-project-body">
         <section className="ds-project-desc-col">
-          <div className="ds-project-body-label">Overview</div>
+          <div className="ds-project-body-label">Обзор</div>
           <div className="ds-project-full-desc">
             <p>{project.description}</p>
           </div>
@@ -80,7 +80,7 @@ export default async function ProjectPage({
         <aside className="ds-project-sidebar">
           {tags.length > 0 && (
             <div className="ds-project-sidebar-block">
-              <div className="ds-project-sidebar-label">Tags</div>
+              <div className="ds-project-sidebar-label">Теги</div>
               <div className="ds-project-tags-wrap">
                 {tags.map((tag) => (
                   <Link
@@ -97,7 +97,7 @@ export default async function ProjectPage({
 
           {links.length > 0 && (
             <div className="ds-project-sidebar-block">
-              <div className="ds-project-sidebar-label">Links</div>
+              <div className="ds-project-sidebar-label">Ссылки</div>
               <nav className="ds-project-sidebar-links">
                 {links.map((link) => (
                   <a
@@ -116,13 +116,13 @@ export default async function ProjectPage({
           )}
 
           <div className="ds-project-sidebar-block">
-            <div className="ds-project-sidebar-label">Year</div>
+            <div className="ds-project-sidebar-label">Год</div>
             <div className="ds-project-sidebar-value">{project.year}</div>
           </div>
 
           {category && (
             <div className="ds-project-sidebar-block">
-              <div className="ds-project-sidebar-label">Category</div>
+              <div className="ds-project-sidebar-label">Категория</div>
               <Link
                 href={`/projects?category=${encodeURIComponent(category)}`}
                 className="ds-project-sidebar-value ds-sidebar-cat-link"

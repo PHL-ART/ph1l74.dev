@@ -114,22 +114,21 @@ export const ContactsPage = () => {
     <main className="ds-contacts-page">
       {/* ── Left: heading + email CTA ── */}
       <section className="ds-contacts-left">
-        <div className="ds-contacts-eyebrow ds-eyebrow">03 / Contacts</div>
+        <div className="ds-contacts-eyebrow ds-eyebrow">03 / Контакты</div>
 
         <h1 className="ds-contacts-hero-title">
-          Let&apos;s
+          На&nbsp;связи
           <span className="ghost">
-            Connect<span className="dot">.</span>
+            <span className="dot">.</span>
           </span>
         </h1>
 
         <p className="ds-contacts-intro">
-          Whether you have a project in mind, want to collaborate, or just want to say hi:
-          pick any channel that works for you. I&apos;m always happy to talk.
+          Есть проект, идея или просто хочется поздороваться — выбери удобный канал. Всегда рад поговорить.
         </p>
 
         <div className="ds-contacts-email-block">
-          <div className="ds-contacts-email-label">Primary email</div>
+          <div className="ds-contacts-email-label">Основной email</div>
           <a href="mailto:astakhovfilat@gmail.com" className="ds-contacts-email-link">
             astakhovfilat@gmail.com
           </a>
