@@ -21,6 +21,7 @@ export const Header: FC = () => {
   return (
     <header className="ds-site-header">
       <Link href="/" className="ds-site-logo">
+        <img src="/assets/icons/fa-logo.svg" alt="" aria-hidden="true" width={20} height={20} />
         ph1l74<span className="dot">.</span>dev
       </Link>
 

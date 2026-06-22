@@ -29,14 +29,18 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Filat Astakhov",
-    default: "Filat Astakhov",
+    template: '%s | Filat Astakhov',
+    default: 'Filat Astakhov',
+  },
+  description: 'The official site of frontend developer Filat Astakhov',
+  icons: {
+    icon: '/assets/icons/fa-logo.svg',
+    shortcut: '/assets/icons/fa-logo.svg',
   },
   openGraph: {
-    title: "Filat Astakhov",
-    description: "The official site of frontend developer Filat Astakhov",
+    title: 'Filat Astakhov',
+    description: 'The official site of frontend developer Filat Astakhov',
   },
-  description: "The official site of frontend developer Filat Astakhov",
 };
 
 export default function RootLayout({

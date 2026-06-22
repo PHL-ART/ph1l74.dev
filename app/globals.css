@@ -61,6 +61,21 @@ body {
   color: var(--ds-text);
 }
 
+/* ─── Interaction ─────────────────────────────────────────── */
+.ds-tag,
+.ds-eyebrow,
+.ds-status,
+.ds-hero-bg-char,
+.ds-about-heading-ghost,
+.ds-project-hero-ghost,
+.ds-project-nav,
+nav,
+header,
+footer,
+button {
+  user-select: none;
+}
+
 .liquid-ether-container {
   position: relative;
   overflow: hidden;
@@ -109,6 +124,7 @@ img { max-width: 100%; display: block; }
   padding: 0.75rem 0;
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .ds-site-logo:hover,
@@ -1084,21 +1100,6 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 
 .ds-contacts-email-link:hover { color: var(--ds-accent); }
 
-.ds-contacts-bg-num {
-  position: absolute;
-  bottom: 2rem;
-  left: var(--ds-px);
-  font-family: var(--font-widock, sans-serif);
-  font-weight: 800;
-  font-size: clamp(8rem, 18vw, 22rem);
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--ds-text-4);
-  user-select: none;
-  pointer-events: none;
-  letter-spacing: -0.05em;
-}
-
 .ds-contacts-right {
   padding: 5rem var(--ds-px) 4rem;
   overflow-y: auto;
@@ -1218,7 +1219,6 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 @media (max-width: 900px) {
   .ds-contacts-page       { grid-template-columns: 1fr; }
   .ds-contacts-left       { border-right: none; border-bottom: 1px solid var(--ds-border); padding-bottom: 3rem; }
-  .ds-contacts-bg-num     { display: none; }
 }
 
 @media (max-width: 600px) {

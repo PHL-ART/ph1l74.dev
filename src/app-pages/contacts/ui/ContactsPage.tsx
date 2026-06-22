@@ -135,7 +135,6 @@ export const ContactsPage = () => {
           </a>
         </div>
 
-        <div className="ds-contacts-bg-num" aria-hidden="true">03</div>
       </section>
 
       {/* ── Right: contacts list ── */}
