@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { ImageLightbox, type GalleryImage } from './ImageLightbox';
 
 interface Props {
@@ -10,14 +11,16 @@ interface Props {
 export function ProjectGallery({ images }: Props) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  if (images.length === 0) return null;
+  const goNext = useCallback(
+    () => setActiveIndex((i) => (i === null ? null : (i + 1) % images.length)),
+    [images.length]
+  );
+  const goPrev = useCallback(
+    () => setActiveIndex((i) => (i === null ? null : (i - 1 + images.length) % images.length)),
+    [images.length]
+  );
 
-  const goNext = () =>
-    setActiveIndex((i) => (i === null ? null : (i + 1) % images.length));
-  const goPrev = () =>
-    setActiveIndex((i) =>
-      i === null ? null : (i - 1 + images.length) % images.length
-    );
+  if (images.length === 0) return null;
 
   return (
     <section className="ds-gallery">
@@ -34,15 +37,17 @@ export function ProjectGallery({ images }: Props) {
           </button>
         ))}
       </div>
-      {activeIndex !== null && (
-        <ImageLightbox
-          images={images}
-          index={activeIndex}
-          onClose={() => setActiveIndex(null)}
-          onNext={goNext}
-          onPrev={goPrev}
-        />
-      )}
+      <AnimatePresence>
+        {activeIndex !== null && (
+          <ImageLightbox
+            images={images}
+            index={activeIndex}
+            onClose={() => setActiveIndex(null)}
+            onNext={goNext}
+            onPrev={goPrev}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }

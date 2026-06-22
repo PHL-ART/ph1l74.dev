@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export type GalleryImage = {
   id: number;
@@ -32,50 +32,48 @@ export function ImageLightbox({ images, index, onClose, onNext, onPrev }: Props)
   }, [onClose, onNext, onPrev]);
 
   return (
-    <AnimatePresence>
+    <motion.div
+      className="ds-lightbox-overlay"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+    >
       <motion.div
-        className="ds-lightbox-overlay"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
+        className="ds-lightbox-content"
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.92 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        onClick={(e) => e.stopPropagation()}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.x < -80) onNext();
+          if (info.offset.x > 80) onPrev();
+        }}
       >
-        <motion.div
-          className="ds-lightbox-content"
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.92 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          onClick={(e) => e.stopPropagation()}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          onDragEnd={(_, info) => {
-            if (info.offset.x < -80) onNext();
-            if (info.offset.x > 80) onPrev();
-          }}
-        >
-          <img src={image.url} alt={image.alt ?? ''} className="ds-lightbox-img" />
-          {images.length > 1 && (
-            <>
-              <button
-                className="ds-lightbox-btn ds-lightbox-prev"
-                onClick={(e) => { e.stopPropagation(); onPrev(); }}
-                aria-label="Предыдущее"
-              >←</button>
-              <button
-                className="ds-lightbox-btn ds-lightbox-next"
-                onClick={(e) => { e.stopPropagation(); onNext(); }}
-                aria-label="Следующее"
-              >→</button>
-            </>
-          )}
-          <button
-            className="ds-lightbox-close"
-            onClick={onClose}
-            aria-label="Закрыть"
-          >✕</button>
-        </motion.div>
+        <img src={image.url} alt={image.alt ?? ''} className="ds-lightbox-img" />
+        {images.length > 1 && (
+          <>
+            <button
+              className="ds-lightbox-btn ds-lightbox-prev"
+              onClick={(e) => { e.stopPropagation(); onPrev(); }}
+              aria-label="Предыдущее"
+            >←</button>
+            <button
+              className="ds-lightbox-btn ds-lightbox-next"
+              onClick={(e) => { e.stopPropagation(); onNext(); }}
+              aria-label="Следующее"
+            >→</button>
+          </>
+        )}
+        <button
+          className="ds-lightbox-close"
+          onClick={onClose}
+          aria-label="Закрыть"
+        >✕</button>
       </motion.div>
-    </AnimatePresence>
+    </motion.div>
   );
 }
