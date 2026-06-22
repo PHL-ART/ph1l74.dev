@@ -216,6 +216,21 @@ img { max-width: 100%; display: block; }
   color: var(--ds-text-2);
 }
 
+.ds-footer-powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-jetbrains-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #55555f;
+  text-decoration: none;
+  transition: color 0.3s;
+  user-select: none;
+}
+.ds-footer-powered:hover { color: #ededf0; }
+
 /* в”Ђв”Ђв”Ђ Shared: Eyebrow в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-eyebrow {
   font-family: var(--font-jetbrains-mono, 'JetBrains Mono', 'Courier New', monospace);
