@@ -94,7 +94,7 @@ export function ProjectDetailContent({
                   className="ds-project-hero-link"
                 >
                   {link.name}
-                  <span aria-hidden="true">↗</span>
+                  <span aria-hidden="true">↗︎</span>
                 </a>
               ))}
             </motion.nav>
@@ -147,7 +147,7 @@ export function ProjectDetailContent({
                     className="ds-project-sidebar-link"
                   >
                     <span>{link.name}</span>
-                    <span className="ds-project-sidebar-arrow" aria-hidden="true">↗</span>
+                    <span className="ds-project-sidebar-arrow" aria-hidden="true">↗︎</span>
                   </a>
                 ))}
               </nav>

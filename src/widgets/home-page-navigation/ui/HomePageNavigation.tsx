@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import Link from "next/link";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-const MotionLink = motion(Link);
+const MotionLink = motion.create(Link);
 
 const cards = [
   {
@@ -47,7 +47,7 @@ export const HomePageNavigation = () => {
             <div className="ds-home-nav-num">{card.num}</div>
             <div className="ds-home-nav-title">{card.title}</div>
             <div className="ds-home-nav-desc">{card.desc}</div>
-            <span className="ds-home-nav-arrow" aria-hidden="true">↗</span>
+            <span className="ds-home-nav-arrow" aria-hidden="true">↗︎</span>
           </MotionLink>
         ))}
       </div>

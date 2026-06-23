@@ -197,7 +197,7 @@ export const ProjectsPage = () => {
                   </div>
                 )}
 
-                <div className="ds-project-arrow" aria-hidden="true">↗</div>
+                <div className="ds-project-arrow" aria-hidden="true">↗︎</div>
               </div>
             </motion.li>
           ))}

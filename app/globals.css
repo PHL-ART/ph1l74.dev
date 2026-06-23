@@ -62,6 +62,16 @@ body {
   color: var(--ds-text);
 }
 
+/* ─── Arrow Glyph: force text presentation (not colour emoji) ── */
+/* U+FE0E is already appended in JSX; this adds CSS-level intent  */
+.ds-home-nav-arrow,
+.ds-project-arrow,
+.ds-contact-arrow,
+.ds-project-sidebar-arrow,
+.ds-project-hero-link span[aria-hidden] {
+  font-variant-emoji: text;
+}
+
 /* ─── Interaction ─────────────────────────────────────────── */
 .ds-tag,
 .ds-eyebrow,

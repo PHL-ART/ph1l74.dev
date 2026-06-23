@@ -53,10 +53,12 @@ export default function RootLayout({
       lang="ru"
       className={`dark ${widock.variable} ${unbounded.variable} ${jetbrainsMono.variable}`}
       style={{ colorScheme: 'dark' }}
+      suppressHydrationWarning
     >
       <body
         className="antialiased"
         style={{ fontFamily: "var(--font-unbounded, 'Helvetica Neue', sans-serif)" }}
+        suppressHydrationWarning
       >
         <ErrorProvider>
           <MainLayout>{children}</MainLayout>

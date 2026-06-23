@@ -188,7 +188,7 @@ export const ContactsPage = () => {
                   </div>
                   <div className="ds-contact-row-right">
                     <span className="ds-contact-kind">{c.kind}</span>
-                    <span className="ds-contact-arrow" aria-hidden="true">↗</span>
+                    <span className="ds-contact-arrow" aria-hidden="true">↗︎</span>
                   </div>
                 </a>
               );

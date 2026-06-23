@@ -3,6 +3,17 @@
 const nextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ['@prisma/client'],
+  webpack: (config) => {
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: [
+        '**/node_modules/**',
+        '**/.git/**',
+        '**/System Volume Information/**',
+      ],
+    };
+    return config;
+  },
   images: {
     remotePatterns: [
       {
