@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import prisma from '@/shared/api/database/prisma';
 import { ProjectDetailContent } from '@/app-pages/projects/ui/ProjectDetailContent';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProjectPage({
   params,
 }: {
