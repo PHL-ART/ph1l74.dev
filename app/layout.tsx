@@ -29,6 +29,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://dev.ph1l74.com'),
   title: {
     template: '%s | Филат Астахов',
     default: 'Филат Астахов',
@@ -41,6 +42,24 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Филат Астахов',
     description: 'Официальный сайт фронтенд разработчика Филата Астахова',
+    url: 'https://dev.ph1l74.com',
+    siteName: 'dev.ph1l74.com',
+    type: 'website',
+    locale: 'ru_RU',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'Филат Астахов — фронтенд разработчик',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Филат Астахов',
+    description: 'Официальный сайт фронтенд разработчика Филата Астахова',
+    images: ['/opengraph-image'],
   },
 };
 

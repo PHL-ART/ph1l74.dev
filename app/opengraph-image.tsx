@@ -6,6 +6,7 @@ import {
   getOgLogoDataUri,
 } from '@/shared/lib/og-image';
 
+export const runtime = 'nodejs';
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
