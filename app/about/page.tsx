@@ -1,5 +1,7 @@
 import { AboutPage } from "@/app-pages/about/ui/AboutPage";
 
+export const dynamic = 'force-dynamic';
+
 export default function About() {
   return <AboutPage />;
 }
