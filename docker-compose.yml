@@ -1,5 +1,6 @@
 services:
   ph1l74-dev:
+    image: ghcr.io/ph1l74/ph1l74.dev:latest
     build:
       context: .
       dockerfile: Dockerfile
