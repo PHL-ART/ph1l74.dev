@@ -51,9 +51,9 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd /opt/ph1l74.dev
+            cd /home/projects/ph1l74.dev
             docker compose pull ph1l74-dev
             docker compose up -d --no-deps ph1l74-dev
             docker image prune -f
