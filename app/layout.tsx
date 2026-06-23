@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { MainLayout } from "@/shared/ui/MainLayout";
 import { ErrorProvider } from "@/shared/lib/error-context";
+import { Analytics } from "@/shared/ui/Analytics";
 import localFont from 'next/font/local';
 import { Unbounded, JetBrains_Mono } from 'next/font/google';
 
@@ -63,6 +64,7 @@ export default function RootLayout({
         <ErrorProvider>
           <MainLayout>{children}</MainLayout>
         </ErrorProvider>
+        <Analytics />
       </body>
     </html>
   );
