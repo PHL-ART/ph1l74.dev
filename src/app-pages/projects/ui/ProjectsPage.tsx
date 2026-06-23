@@ -132,9 +132,13 @@ export const ProjectsPage = () => {
                 <div className="ds-project-main">
                   <h2 className="ds-project-title">
                     {p.title}
-                    {p.categories?.[0] && (
-                      <span className="ds-project-category">
-                        {p.categories[0].name}
+                    {p.categories && p.categories.length > 0 && (
+                      <span className="ds-project-categories">
+                        {p.categories.map((c) => (
+                          <span key={c.id} className="ds-project-category">
+                            {c.name}
+                          </span>
+                        ))}
                       </span>
                     )}
                   </h2>

@@ -22,7 +22,7 @@ export default async function ProjectPage({
     notFound();
   }
 
-  const category = project.categories?.[0]?.name;
+  const categories = project.categories?.map((c) => c.name) ?? [];
   const tags = project.tags?.map((t) => t.tag.name) ?? [];
   const links = project.links ?? [];
   const ghostChar = project.title?.[0]?.toUpperCase() ?? 'P';
@@ -44,8 +44,10 @@ export default async function ProjectPage({
       {/* Hero */}
       <header className="ds-project-hero">
         <div className="ds-project-hero-inner">
-          {category && (
-            <div className="ds-eyebrow ds-project-hero-eyebrow">{category}</div>
+          {categories.length > 0 && (
+            <div className="ds-eyebrow ds-project-hero-eyebrow">
+              {categories.join(' · ')}
+            </div>
           )}
           <h1 className="ds-project-hero-title">{project.title}</h1>
           <p className="ds-project-hero-desc">{project.description}</p>
@@ -123,15 +125,22 @@ export default async function ProjectPage({
             <div className="ds-project-sidebar-value">{project.year}</div>
           </div>
 
-          {category && (
+          {categories.length > 0 && (
             <div className="ds-project-sidebar-block">
-              <div className="ds-project-sidebar-label">Категория</div>
-              <Link
-                href={`/projects?category=${encodeURIComponent(category)}`}
-                className="ds-project-sidebar-value ds-sidebar-cat-link"
-              >
-                {category}
-              </Link>
+              <div className="ds-project-sidebar-label">
+                {categories.length === 1 ? 'Категория' : 'Категории'}
+              </div>
+              <div className="ds-project-tags-wrap">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat}
+                    href={`/projects?category=${encodeURIComponent(cat)}`}
+                    className="ds-tag"
+                  >
+                    {cat}
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
         </aside>
