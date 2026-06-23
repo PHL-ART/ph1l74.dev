@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
 import { ProjectsFilterNav } from '@/widgets/projects-filter-nav';
@@ -18,10 +19,10 @@ type ProjectItem = {
   tags?: { id: number; tagId: number; tag: { id: number; name: string } }[];
 };
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+
 export const ProjectsPage = () => {
   const router = useRouter();
-
-  // URL is the single source of truth for active filters
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get('category');
   const activeTag = searchParams.get('tag');
@@ -29,6 +30,7 @@ export const ProjectsPage = () => {
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const reduced = useReducedMotion();
 
   const loadProjects = async () => {
     try {
@@ -56,7 +58,6 @@ export const ProjectsPage = () => {
     return Array.from(seen).sort();
   }, [projects]);
 
-  // AND-logic: project must satisfy both active category AND active tag (if set)
   const filteredProjects = useMemo(() => {
     return projects.filter((p) => {
       const categoryMatch =
@@ -71,22 +72,40 @@ export const ProjectsPage = () => {
 
   const showFilterNav = !loading && !error && projects.length > 0;
 
+  const fadeUp = (delay: number) =>
+    reduced
+      ? {}
+      : {
+          initial: { opacity: 0, y: 14 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.5, delay, ease: EASE },
+        };
+
   return (
     <main className="ds-projects-wrap">
       <div className="ds-page-header">
-        <h1 className="ds-page-title" data-num="01 / Работа">Проекты</h1>
-        <div className="ds-page-header-meta">
+        <div className="ds-page-header-left">
+          <motion.div className="ds-eyebrow" {...fadeUp(0)}>
+            01 / Работа
+          </motion.div>
+          <motion.h1 className="ds-page-title" {...fadeUp(0.08)}>
+            Проекты
+          </motion.h1>
+        </div>
+        <motion.div className="ds-page-header-meta" {...fadeUp(0.08)}>
           <div>ОТБОРНЫЕ ПРОЕКТЫ</div>
           <div>2014 – {new Date().getFullYear()}</div>
-        </div>
+        </motion.div>
       </div>
 
       {showFilterNav && (
-        <ProjectsFilterNav
-          categories={allCategories}
-          activeCategory={activeCategory}
-          activeTag={activeTag}
-        />
+        <motion.div {...fadeUp(0.16)}>
+          <ProjectsFilterNav
+            categories={allCategories}
+            activeCategory={activeCategory}
+            activeTag={activeTag}
+          />
+        </motion.div>
       )}
 
       {loading && (
@@ -117,8 +136,18 @@ export const ProjectsPage = () => {
       {!loading && !error && filteredProjects.length > 0 && (
         <ul className="ds-projects-list" role="list">
           {filteredProjects.map((p, i) => (
-            <li key={p.id}>
-              {/* Stretched link covers the entire card; sits behind interactive children */}
+            <motion.li
+              key={p.id}
+              {...(reduced ? {} : {
+                initial: { opacity: 0, y: 10 },
+                animate: { opacity: 1, y: 0 },
+                transition: {
+                  duration: 0.45,
+                  delay: 0.22 + Math.min(i, 5) * 0.07,
+                  ease: EASE,
+                },
+              })}
+            >
               <Link
                 href={`/projects/${p.shortname}`}
                 className="ds-project-item-link"
@@ -170,7 +199,7 @@ export const ProjectsPage = () => {
 
                 <div className="ds-project-arrow" aria-hidden="true">↗</div>
               </div>
-            </li>
+            </motion.li>
           ))}
         </ul>
       )}

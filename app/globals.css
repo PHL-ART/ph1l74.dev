@@ -52,6 +52,7 @@ html {
   color: var(--ds-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  user-select: none;
 }
 
 body {
@@ -75,6 +76,11 @@ footer,
 button {
   user-select: none;
 }
+
+/* Restore selection for the admin panel and specific prose sections */
+.ds-admin          { user-select: auto; }
+.ds-about-body     { user-select: text; cursor: text; }
+.ds-project-full-desc { user-select: text; cursor: text; }
 
 .liquid-ether-container {
   position: relative;
@@ -327,12 +333,9 @@ img { max-width: 100%; display: block; }
   display: block;
   font-size: clamp(4rem, 12vw, 13rem);
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--ds-text-3);
-  transition: -webkit-text-stroke-color 0.4s var(--ds-ease-out);
+  -webkit-text-stroke: 1.5px var(--ds-text);
   cursor: default;
 }
-
-.ds-hero-name-last:hover { -webkit-text-stroke-color: var(--ds-text-2); }
 
 /* Meta info grid */
 .ds-hero-meta {
@@ -539,6 +542,8 @@ img { max-width: 100%; display: block; }
     border-top: 1px solid var(--ds-border);
     padding-left: 0;
   }
+  /* Ghost stroke on contacts is faint at small sizes — lighten it */
+  .ds-contacts-hero-title .ghost   { -webkit-text-stroke-color: oklch(40% 0.005 27); }
 }
 
 /* в”Ђв”Ђв”Ђ Shared Tag в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
@@ -600,7 +605,7 @@ img { max-width: 100%; display: block; }
 .ds-about-heading-ghost {
   display: block;
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--ds-text-3);
+  -webkit-text-stroke: 1.5px var(--ds-text);
 }
 
 .ds-about-body {
@@ -794,6 +799,12 @@ img { max-width: 100%; display: block; }
   gap: 2rem;
 }
 
+.ds-page-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
 .ds-page-title {
   font-family: var(--font-widock, sans-serif);
   font-weight: 800;
@@ -802,20 +813,6 @@ img { max-width: 100%; display: block; }
   text-transform: uppercase;
   line-height: 0.86;
   color: var(--ds-text);
-  position: relative;
-}
-
-.ds-page-title::before {
-  content: attr(data-num);
-  position: absolute;
-  top: -1.5rem;
-  left: 0;
-  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
-  font-size: 0.56rem;
-  letter-spacing: 0.2em;
-  color: var(--ds-text-2);
-  font-weight: 400;
-  text-transform: uppercase;
 }
 
 .ds-page-header-meta {
