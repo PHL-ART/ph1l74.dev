@@ -1,5 +1,6 @@
 services:
   ph1l74-dev:
+    image: ghcr.io/ph1l74/ph1l74.dev:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -20,6 +21,8 @@ services:
       - S3_ACCESS_KEY=${S3_ACCESS_KEY}
       - S3_SECRET_KEY=${S3_SECRET_KEY}
       - S3_PUBLIC_URL=${S3_PUBLIC_URL}
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
 
     # Если вы используете Traefik как reverse-proxy, он должен быть
     # запущен в той же внешней сети `ph1l74-network`

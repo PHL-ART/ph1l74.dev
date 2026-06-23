@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 
 const navLinks = [
-  { title: 'Home',     href: '/' },
-  { title: 'Projects', href: '/projects' },
-  { title: 'About',    href: '/about' },
-  { title: 'Contacts', href: '/contacts' },
+  { title: 'В начало',  href: '/' },
+  { title: 'Проекты',   href: '/projects' },
+  { title: 'Обо мне',   href: '/about' },
+  { title: 'Контакты',  href: '/contacts' },
 ];
 
 export const Header: FC = () => {
@@ -21,6 +21,7 @@ export const Header: FC = () => {
   return (
     <header className="ds-site-header">
       <Link href="/" className="ds-site-logo">
+        <img src="/assets/icons/fa-logo.svg" alt="" aria-hidden="true" width={20} height={20} />
         ph1l74<span className="dot">.</span>dev
       </Link>
 

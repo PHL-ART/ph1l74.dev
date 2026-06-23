@@ -12,18 +12,18 @@ export const MainLayout: FC<MainLayoutProps> = ({ children }) => {
     <>
       <div style={{ position: "fixed", inset: 0, zIndex: -1 }}>
         <LiquidEther
-          colors={["#ff2727", "#ff0000", "#320000"]}
-          mouseForce={10}
-          cursorSize={55}
+          colors={["#150002", "#8c0018", "#e8192a"]}
+          mouseForce={24}
+          cursorSize={88}
           isViscous
-          viscous={92}
+          viscous={82}
           iterationsViscous={20}
           iterationsPoisson={28}
           resolution={0.45}
           isBounce={false}
           autoDemo
-          autoSpeed={0.3}
-          autoIntensity={0.3}
+          autoSpeed={0.42}
+          autoIntensity={1.8}
           takeoverDuration={0.25}
           autoResumeDelay={3000}
           autoRampDuration={0.6}

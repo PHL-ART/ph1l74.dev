@@ -21,7 +21,7 @@ export const ErrorMessage: FC<ErrorMessageProps> = ({ title, message, onRetry })
 
           {/* Title */}
           <h2
-            style={{ fontFamily: "var(--font-syne, 'Helvetica Neue', sans-serif)" }}
+            style={{ fontFamily: "var(--font-widock, sans-serif)" }}
             className="font-extrabold text-4xl tracking-tight uppercase leading-none text-[var(--ds-text)] mb-4"
           >
             {title}

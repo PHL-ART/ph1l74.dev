@@ -35,6 +35,12 @@ COPY . .
 # Disable Next telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Public env vars — embedded into JS bundle at build time
+ARG NEXT_PUBLIC_YANDEX_METRIKA_ID
+ARG NEXT_PUBLIC_GA_ID
+ENV NEXT_PUBLIC_YANDEX_METRIKA_ID=$NEXT_PUBLIC_YANDEX_METRIKA_ID
+ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
+
 # Generate Prisma client (in case it's not generated yet)
 RUN npx prisma generate
 

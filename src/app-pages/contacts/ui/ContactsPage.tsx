@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 type ContactItem = {
   id: number;
@@ -10,7 +11,6 @@ type ContactItem = {
   order: number;
 };
 
-/* Map well-known platform names to a small Unicode glyph */
 const ICON_MAP: Record<string, string> = {
   email:        '✉',
   telegram:     '✈',
@@ -34,7 +34,6 @@ const ICON_MAP: Record<string, string> = {
 const getIcon = (label: string) =>
   ICON_MAP[label.toLowerCase()] ?? '→';
 
-/* Fallback static contacts shown when the DB is empty */
 const FALLBACK_GROUPS: { title: string; items: Omit<ContactItem, 'id' | 'order'>[] }[] = [
   {
     title: 'Primary',
@@ -66,7 +65,6 @@ const toHref = (value: string) => {
 
 const toHandle = (value: string) => {
   if (value.startsWith('mailto:')) return value.replace('mailto:', '');
-  // plain email address — contains @ but not a URL
   if (value.includes('@') && !value.startsWith('http')) return value;
   try {
     const url = new URL(value.startsWith('http') ? value : `https://${value}`);
@@ -76,21 +74,22 @@ const toHandle = (value: string) => {
   }
 };
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+
 export const ContactsPage = () => {
   const [contacts, setContacts] = useState<ContactItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const reduced = useReducedMotion();
 
   const loadContacts = async () => {
     try {
       setLoading(true);
-      setError(null);
       const res = await fetch('/api/contacts', { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to load contacts');
       const data: ContactItem[] = await res.json();
       setContacts(data.sort((a, b) => a.order - b.order));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Load error');
+    } catch {
+      // fall through to fallback
     } finally {
       setLoading(false);
     }
@@ -98,7 +97,6 @@ export const ContactsPage = () => {
 
   useEffect(() => { loadContacts(); }, []);
 
-  /* Group API contacts by `kind`, or use fallback if empty */
   const groups = (() => {
     if (contacts.length === 0) return FALLBACK_GROUPS;
     const map = new Map<string, ContactItem[]>();
@@ -110,32 +108,40 @@ export const ContactsPage = () => {
     return Array.from(map.entries()).map(([title, items]) => ({ title, items }));
   })();
 
+  const fadeUp = (delay: number) =>
+    reduced
+      ? {}
+      : {
+          initial: { opacity: 0, y: 14 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.5, delay, ease: EASE },
+        };
+
   return (
     <main className="ds-contacts-page">
       {/* ── Left: heading + email CTA ── */}
       <section className="ds-contacts-left">
-        <div className="ds-contacts-eyebrow ds-eyebrow">03 / Contacts</div>
+        <motion.div className="ds-contacts-eyebrow ds-eyebrow" {...fadeUp(0)}>
+          03 / На связи
+        </motion.div>
 
-        <h1 className="ds-contacts-hero-title">
-          Let&apos;s
+        <motion.h1 className="ds-contacts-hero-title" {...fadeUp(0.08)}>
+          КОНТАКТЫ
           <span className="ghost">
-            Connect<span className="dot">.</span>
+            <span className="dot">.</span>
           </span>
-        </h1>
+        </motion.h1>
 
-        <p className="ds-contacts-intro">
-          Whether you have a project in mind, want to collaborate, or just want to say hi:
-          pick any channel that works for you. I&apos;m always happy to talk.
-        </p>
+        <motion.p className="ds-contacts-intro" {...fadeUp(0.18)}>
+          Есть проект, идея или просто хочется поздороваться — выбери удобный канал. Всегда рад поговорить.
+        </motion.p>
 
-        <div className="ds-contacts-email-block">
-          <div className="ds-contacts-email-label">Primary email</div>
+        <motion.div className="ds-contacts-email-block" {...fadeUp(0.28)}>
+          <div className="ds-contacts-email-label">Основной email</div>
           <a href="mailto:astakhovfilat@gmail.com" className="ds-contacts-email-link">
             astakhovfilat@gmail.com
           </a>
-        </div>
-
-        <div className="ds-contacts-bg-num" aria-hidden="true">03</div>
+        </motion.div>
       </section>
 
       {/* ── Right: contacts list ── */}
@@ -149,8 +155,16 @@ export const ContactsPage = () => {
           </div>
         )}
 
-        {!loading && groups.map((group) => (
-          <div key={group.title} className="ds-contact-group">
+        {!loading && groups.map((group, gi) => (
+          <motion.div
+            key={group.title}
+            className="ds-contact-group"
+            {...(reduced ? {} : {
+              initial: { opacity: 0, y: 10 },
+              animate: { opacity: 1, y: 0 },
+              transition: { duration: 0.45, delay: 0.12 + gi * 0.1, ease: EASE },
+            })}
+          >
             <div className="ds-contact-group-title">{group.title}</div>
 
             {group.items.map((c, i) => {
@@ -174,12 +188,12 @@ export const ContactsPage = () => {
                   </div>
                   <div className="ds-contact-row-right">
                     <span className="ds-contact-kind">{c.kind}</span>
-                    <span className="ds-contact-arrow" aria-hidden="true">↗</span>
+                    <span className="ds-contact-arrow" aria-hidden="true">↗︎</span>
                   </div>
                 </a>
               );
             })}
-          </div>
+          </motion.div>
         ))}
       </aside>
     </main>

@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { useErrorHandler } from '@/shared/lib/error-context';
 import { ErrorMessage } from '@/shared/ui/ErrorMessage';
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 interface Project {
   id: number;
   shortname: string;
@@ -12,6 +17,7 @@ interface Project {
   year: number;
   description: string;
   url?: string;
+  categories?: Category[];
 }
 
 export const ProjectList = () => {
@@ -79,12 +85,21 @@ export const ProjectList = () => {
     <div className="flex flex-col gap-8">
       {projects.map((project) => (
         <div key={project.id} className="border-b border-gray-700 pb-4">
-          <Link 
-            href={`/projects/${project.shortname}`} 
+          <Link
+            href={`/projects/${project.shortname}`}
             className="hover:underline text-xl font-medium"
           >
             {project.title} ({project.year})
           </Link>
+          {project.categories && project.categories.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {project.categories.map((cat) => (
+                <span key={cat.id} className="text-xs text-red-700 uppercase tracking-wider">
+                  {cat.name}
+                </span>
+              ))}
+            </div>
+          )}
           <p className="text-gray-400 mt-2">{project.description}</p>
         </div>
       ))}

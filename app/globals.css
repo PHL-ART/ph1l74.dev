@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens ───────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Design Tokens в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 :root {
-  /* Shadcn/radix tokens — kept for admin panel */
+  /* Shadcn/radix tokens вЂ” kept for admin panel */
   --background: 0 0% 0%;
   --foreground: 0 0% 98%;
   --card: 0 0% 3.9%;
@@ -27,7 +27,7 @@
   --radius: 0.5rem;
   --brand: 0 72% 31%;
 
-  /* Design system — Dark Editorial / Swiss Brutalism */
+  /* Design system вЂ” Dark Editorial / Swiss Brutalism */
   --ds-bg:           oklch(5.5% 0.006 27);
   --ds-surface:      oklch(8.5% 0.005 27);
   --ds-surface-2:    oklch(12%  0.005 27);
@@ -45,13 +45,14 @@
   --ds-px:           clamp(1.5rem, 4vw, 4.5rem);
 }
 
-/* ─── Base ────────────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Base в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 html {
   color-scheme: dark;
   background: var(--ds-bg);
   color: var(--ds-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  user-select: none;
 }
 
 body {
@@ -60,6 +61,36 @@ body {
   background: transparent;
   color: var(--ds-text);
 }
+
+/* ─── Arrow Glyph: force text presentation (not colour emoji) ── */
+/* U+FE0E is already appended in JSX; this adds CSS-level intent  */
+.ds-home-nav-arrow,
+.ds-project-arrow,
+.ds-contact-arrow,
+.ds-project-sidebar-arrow,
+.ds-project-hero-link span[aria-hidden] {
+  font-variant-emoji: text;
+}
+
+/* ─── Interaction ─────────────────────────────────────────── */
+.ds-tag,
+.ds-eyebrow,
+.ds-status,
+.ds-hero-bg-char,
+.ds-about-heading-ghost,
+.ds-project-hero-ghost,
+.ds-project-nav,
+nav,
+header,
+footer,
+button {
+  user-select: none;
+}
+
+/* Restore selection for the admin panel and specific prose sections */
+.ds-admin          { user-select: auto; }
+.ds-about-body     { user-select: text; cursor: text; }
+.ds-project-full-desc { user-select: text; cursor: text; }
 
 .liquid-ether-container {
   position: relative;
@@ -73,7 +104,7 @@ body {
 a   { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 
-/* ─── Page Layout ─────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Page Layout в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-page {
   position: relative;
   z-index: 1;
@@ -83,7 +114,7 @@ img { max-width: 100%; display: block; }
   flex-direction: column;
 }
 
-/* ─── Site Header ─────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Site Header в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-site-header {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -109,7 +140,16 @@ img { max-width: 100%; display: block; }
   padding: 0.75rem 0;
   display: flex;
   align-items: center;
+  gap: 8px;
 }
+
+.ds-site-logo img {
+  filter: grayscale(1) brightness(0.8);
+  transition: filter 0.2s var(--ds-ease-out);
+}
+
+.ds-site-logo:hover img,
+.ds-site-logo:focus-visible img { filter: grayscale(0) brightness(1); }
 
 .ds-site-logo:hover,
 .ds-site-logo:focus-visible { color: var(--ds-text); outline: none; }
@@ -180,7 +220,7 @@ img { max-width: 100%; display: block; }
   transition: transform 0.32s var(--ds-ease-out), opacity 0.2s, background 0.2s;
 }
 
-/* ─── Site Footer ─────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Site Footer в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-site-footer {
   margin-top: auto;
   border-top: 1px solid var(--ds-border);
@@ -200,7 +240,22 @@ img { max-width: 100%; display: block; }
   color: var(--ds-text-2);
 }
 
-/* ─── Shared: Eyebrow ─────────────────────────────────────── */
+.ds-footer-powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-jetbrains-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #55555f;
+  text-decoration: none;
+  transition: color 0.3s;
+  user-select: none;
+}
+.ds-footer-powered:hover { color: #ededf0; }
+
+/* в”Ђв”Ђв”Ђ Shared: Eyebrow в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-eyebrow {
   font-family: var(--font-jetbrains-mono, 'JetBrains Mono', 'Courier New', monospace);
   font-size: 0.56rem;
@@ -221,7 +276,7 @@ img { max-width: 100%; display: block; }
   flex-shrink: 0;
 }
 
-/* ─── Hero Section ────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Hero Section в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-hero {
   flex: 1;
   display: flex;
@@ -268,32 +323,29 @@ img { max-width: 100%; display: block; }
   50%       { opacity: 0.35; transform: scale(0.75); }
 }
 
-/* Name display — Big Shoulders Display */
+/* Name display — Widock */
 .ds-hero-name {
-  font-family: var(--font-unbounded, 'Impact', sans-serif);
-  font-weight: 900;
+  font-family: var(--font-widock, sans-serif);
+  font-weight: 700;
   line-height: 0.85;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
   margin-bottom: 3.5rem;
 }
 
 .ds-hero-name-first {
   display: block;
-  font-size: clamp(5rem, 14.5vw, 17rem);
+  font-size: clamp(4rem, 12vw, 13rem);
   color: var(--ds-text);
 }
 
 .ds-hero-name-last {
   display: block;
-  font-size: clamp(5rem, 14.5vw, 17rem);
+  font-size: clamp(4rem, 12vw, 13rem);
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--ds-text-3);
-  transition: -webkit-text-stroke-color 0.4s var(--ds-ease-out);
+  -webkit-text-stroke: 1.5px var(--ds-text);
   cursor: default;
 }
-
-.ds-hero-name-last:hover { -webkit-text-stroke-color: var(--ds-text-2); }
 
 /* Meta info grid */
 .ds-hero-meta {
@@ -342,7 +394,7 @@ img { max-width: 100%; display: block; }
   letter-spacing: -0.04em;
 }
 
-/* ─── Home Nav Cards ──────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Home Nav Cards в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-home-nav {
   border-top: 1px solid var(--ds-border);
 }
@@ -393,7 +445,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-home-nav-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: 2.1rem;
   letter-spacing: -0.022em;
@@ -423,7 +475,7 @@ img { max-width: 100%; display: block; }
   color: var(--ds-accent);
 }
 
-/* ─── Responsive ──────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Responsive в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 @media (max-width: 900px) {
   .ds-hero-meta        { grid-template-columns: 1fr 1fr; }
   .ds-home-nav-grid    { grid-template-columns: 1fr; }
@@ -491,7 +543,7 @@ img { max-width: 100%; display: block; }
 
 @media (max-width: 480px) {
   .ds-hero-name-first,
-  .ds-hero-name-last  { font-size: clamp(2.4rem, 13vw, 4.5rem); }
+  .ds-hero-name-last  { font-size: clamp(2rem, 11vw, 3.5rem); }
   .ds-hero-name       { margin-bottom: 2.5rem; }
   .ds-hero-inner      { padding-top: 2.5rem; }
   .ds-hero-meta       { grid-template-columns: 1fr; }
@@ -500,9 +552,11 @@ img { max-width: 100%; display: block; }
     border-top: 1px solid var(--ds-border);
     padding-left: 0;
   }
+  /* Ghost stroke on contacts is faint at small sizes — lighten it */
+  .ds-contacts-hero-title .ghost   { -webkit-text-stroke-color: oklch(40% 0.005 27); }
 }
 
-/* ─── Shared Tag ──────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Shared Tag в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-tag {
   font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
   font-size: 0.55rem;
@@ -530,7 +584,7 @@ img { max-width: 100%; display: block; }
   padding: 2.5rem 0 4rem;
 }
 
-/* ─── About Page ──────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ About Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-about-layout {
   flex: 1;
   display: grid;
@@ -548,7 +602,7 @@ img { max-width: 100%; display: block; }
 .ds-about-eyebrow { margin-bottom: 2.5rem; }
 
 .ds-about-heading {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: clamp(3.5rem, 8vw, 8rem);
   letter-spacing: -0.028em;
@@ -561,7 +615,7 @@ img { max-width: 100%; display: block; }
 .ds-about-heading-ghost {
   display: block;
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--ds-text-3);
+  -webkit-text-stroke: 1.5px var(--ds-text);
 }
 
 .ds-about-body {
@@ -601,7 +655,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-stat-num {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: 2.6rem;
   letter-spacing: -0.03em;
@@ -687,7 +741,7 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-about-photo-initials {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: 7rem;
   letter-spacing: -0.06em;
@@ -732,7 +786,7 @@ img { max-width: 100%; display: block; }
   .ds-stat-num                { font-size: 2rem; }
 }
 
-/* ─── Projects Page ───────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Projects Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-projects-wrap {
   padding: 0 var(--ds-px);
   flex: 1;
@@ -755,28 +809,20 @@ img { max-width: 100%; display: block; }
   gap: 2rem;
 }
 
+.ds-page-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
 .ds-page-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: clamp(4rem, 11vw, 11rem);
   letter-spacing: -0.025em;
   text-transform: uppercase;
   line-height: 0.86;
   color: var(--ds-text);
-  position: relative;
-}
-
-.ds-page-title::before {
-  content: attr(data-num);
-  position: absolute;
-  top: -1.5rem;
-  left: 0;
-  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
-  font-size: 0.56rem;
-  letter-spacing: 0.2em;
-  color: var(--ds-text-2);
-  font-weight: 400;
-  text-transform: uppercase;
 }
 
 .ds-page-header-meta {
@@ -792,7 +838,7 @@ img { max-width: 100%; display: block; }
 .ds-projects-list { list-style: none; }
 .ds-projects-list > li { position: relative; }
 
-/* ─── Projects Filter Nav ─────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Projects Filter Nav в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-projects-filter-nav {
   position: sticky;
   top: var(--ds-header-h);
@@ -869,7 +915,7 @@ img { max-width: 100%; display: block; }
 }
 .ds-pfn-left .ds-pfn-btn { padding-left: 0; }
 
-/* Stretched-link overlay — covers the whole <li> card */
+/* Stretched-link overlay вЂ” covers the whole <li> card */
 .ds-project-item-link {
   position: absolute;
   inset: 0;
@@ -882,7 +928,7 @@ img { max-width: 100%; display: block; }
   outline-offset: -1.5px;
 }
 
-/* Card layout — sits above the stretched link so content is readable,
+/* Card layout вЂ” sits above the stretched link so content is readable,
    but tag buttons (z-index:2) stay clickable over the overlay */
 .ds-project-item {
   display: grid;
@@ -956,12 +1002,23 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-project-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: clamp(1.6rem, 3.8vw, 3.2rem);
   letter-spacing: -0.022em;
   line-height: 1.05;
   color: var(--ds-text);
+}
+
+.ds-project-categories {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  vertical-align: middle;
+  margin-left: 0.75rem;
+  position: relative;
+  top: -0.1em;
 }
 
 .ds-project-category {
@@ -973,10 +1030,6 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   color: var(--ds-accent);
   border: 1px solid var(--ds-accent-dim);
   padding: 0.18rem 0.45rem;
-  vertical-align: middle;
-  margin-left: 0.75rem;
-  position: relative;
-  top: -0.2em;
 }
 
 .ds-project-desc {
@@ -1000,7 +1053,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-project-desc-cell   { grid-row: 3; }
   .ds-project-tags-cell   { grid-row: 4; }
   .ds-project-arrow       { display: none; }
-  .ds-project-category    { display: none; }
+  .ds-project-categories  { display: none; }
 }
 
 @media (max-width: 560px) {
@@ -1011,7 +1064,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-project-title       { font-size: clamp(1.35rem, 5.5vw, 2rem); }
 }
 
-/* ─── Contacts Page ───────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Contacts Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-contacts-page {
   flex: 1;
   display: grid;
@@ -1031,7 +1084,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 .ds-contacts-eyebrow { margin-bottom: 2.5rem; }
 
 .ds-contacts-hero-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 800;
   font-size: clamp(3.5rem, 7.5vw, 8rem);
   letter-spacing: -0.028em;
@@ -1073,7 +1126,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-contacts-email-link {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: clamp(0.95rem, 1.8vw, 1.4rem);
   letter-spacing: -0.01em;
@@ -1083,21 +1136,6 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-contacts-email-link:hover { color: var(--ds-accent); }
-
-.ds-contacts-bg-num {
-  position: absolute;
-  bottom: 2rem;
-  left: var(--ds-px);
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
-  font-weight: 800;
-  font-size: clamp(8rem, 18vw, 22rem);
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--ds-text-4);
-  user-select: none;
-  pointer-events: none;
-  letter-spacing: -0.05em;
-}
 
 .ds-contacts-right {
   padding: 5rem var(--ds-px) 4rem;
@@ -1165,7 +1203,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 .ds-contact-row:hover .ds-contact-icon { color: var(--ds-accent); }
 
 .ds-contact-platform {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: 1.15rem;
   letter-spacing: -0.015em;
@@ -1218,7 +1256,6 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 @media (max-width: 900px) {
   .ds-contacts-page       { grid-template-columns: 1fr; }
   .ds-contacts-left       { border-right: none; border-bottom: 1px solid var(--ds-border); padding-bottom: 3rem; }
-  .ds-contacts-bg-num     { display: none; }
 }
 
 @media (max-width: 600px) {
@@ -1235,7 +1272,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-contact-platform    { font-size: 1rem; }
 }
 
-/* ─── Project Detail Page ─────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Project Detail Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-project-detail {
   flex: 1;
   display: flex;
@@ -1365,7 +1402,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-project-desc-col {
-  padding: 4.5rem var(--ds-px);
+  padding: 2.5rem var(--ds-px);
   border-right: 1px solid var(--ds-border);
 }
 
@@ -1441,7 +1478,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   justify-content: space-between;
   text-decoration: none;
   color: var(--ds-text);
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: -0.01em;
@@ -1553,7 +1590,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-project-desc-col { padding-top: 3rem; padding-bottom: 3rem; }
 }
 
-/* ─── Utilities ───────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Utilities в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 @keyframes shimmer {
   0%   { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -1567,7 +1604,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   }
 }
 
-/* ─── Admin Panel ─────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђ Admin Panel в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 
 .ds-admin {
   flex: 1;
@@ -1680,7 +1717,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-admin-section-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: 1.6rem;
   letter-spacing: -0.022em;
@@ -1729,7 +1766,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   border-radius: 0;
   color: var(--ds-text);
   padding: 0.6rem 0.75rem;
-  font-family: var(--font-bricolage, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-unbounded, sans-serif);
   font-size: 0.88rem;
   line-height: 1.5;
   outline: none;
@@ -1749,7 +1786,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 .ds-admin-select[multiple] { min-height: 80px; padding: 0.3rem 0; }
 .ds-admin-textarea         { resize: vertical; min-height: 90px; }
 
-/* ── MultiCombobox ─────────────────────────────────── */
+/* в”Ђв”Ђ MultiCombobox в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .cmb-wrap { position: relative; width: 100%; }
 
 .cmb-box {
@@ -1844,7 +1881,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .cmb-option--selected::after {
-  content: ' ✓';
+  content: ' вњ“';
   color: var(--ds-accent);
   font-size: 0.7rem;
 }
@@ -1867,7 +1904,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   opacity: 0.45;
   pointer-events: none;
 }
-/* ─────────────────────────────────────────────────── */
+/* в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 
 /* Buttons */
 .ds-admin-btn-primary,
@@ -1942,7 +1979,7 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-admin-row-title {
-  font-family: var(--font-syne, 'Helvetica Neue', sans-serif);
+  font-family: var(--font-widock, sans-serif);
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: -0.015em;
@@ -2052,3 +2089,133 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-admin-list-row                 { padding: 0.85rem 1rem; }
   .ds-admin-form-col                 { padding: 1.5rem; }
 }
+
+/* ─── Gallery ─────────────────────────────────────────────── */
+.ds-gallery {
+  padding: var(--ds-px);
+  padding-bottom: 0;
+  padding-top: 2rem;
+  /* border-top: 1px solid var(--ds-border); */
+  margin-top: 2rem;
+}
+
+.ds-gallery-label {
+  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+  font-size: 0.52rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ds-text-2);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.ds-gallery-label::after {
+  content: '';
+  display: block;
+  height: 1px;
+  width: 2.5rem;
+  background: var(--ds-border);
+  flex-shrink: 0;
+}
+
+
+
+.ds-gallery-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.ds-gallery-strip::-webkit-scrollbar { display: none; }
+
+.ds-gallery-thumb {
+  flex-shrink: 0;
+  width: 160px;
+  height: 110px;
+  border: 1px solid var(--ds-border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--ds-surface);
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.2s;
+}
+.ds-gallery-thumb:hover { border-color: var(--ds-accent); }
+.ds-gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ─── Lightbox ─────────────────────────────────────────────── */
+.ds-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-lightbox-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+  display: block;
+}
+
+.ds-lightbox-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f0f0f0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  user-select: none;
+}
+.ds-lightbox-btn:hover { background: rgba(0, 0, 0, 0.85); }
+.ds-lightbox-prev { left: -60px; }
+.ds-lightbox-next { right: -60px; }
+
+.ds-lightbox-close {
+  position: absolute;
+  top: -48px;
+  right: 0;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f0f0f0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s;
+  user-select: none;
+}
+.ds-lightbox-close:hover { border-color: #f0f0f0; }
