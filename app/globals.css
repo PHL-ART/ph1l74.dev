@@ -786,6 +786,104 @@ img { max-width: 100%; display: block; }
   .ds-stat-num                { font-size: 2rem; }
 }
 
+/* ── Career Timeline ── */
+.ds-timeline {
+  position: relative;
+  padding-left: 1.6rem;
+  margin-bottom: 2.75rem;
+}
+
+.ds-timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.3rem;
+  top: 0.45rem;
+  bottom: 0.45rem;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--ds-accent), transparent);
+}
+
+.ds-timeline-item {
+  position: relative;
+  margin-bottom: 1.6rem;
+}
+
+.ds-timeline-item:last-child { margin-bottom: 0; }
+
+.ds-timeline-dot {
+  position: absolute;
+  left: -1.35rem;
+  top: 0.35rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ds-accent);
+  box-shadow: 0 0 8px rgba(153, 27, 27, 0.6);
+}
+
+.ds-timeline-dot--current {
+  width: 11px;
+  height: 11px;
+  left: -1.45rem;
+  top: 0.28rem;
+  animation: ds-timeline-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ds-timeline-pulse {
+  0%, 100% { box-shadow: 0 0 10px var(--ds-accent), 0 0 20px rgba(153, 27, 27, 0.3); }
+  50%       { box-shadow: 0 0 18px var(--ds-accent), 0 0 36px rgba(153, 27, 27, 0.45); }
+}
+
+.ds-timeline-year {
+  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+  font-size: 0.53rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ds-accent);
+  margin-bottom: 0.18rem;
+}
+
+.ds-timeline-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ds-text);
+  line-height: 1.3;
+  margin-bottom: 0.12rem;
+}
+
+.ds-timeline-sub {
+  font-size: 0.72rem;
+  color: var(--ds-text-3);
+  line-height: 1.4;
+}
+
+/* ── CV download link ── */
+.ds-about-cv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ds-text-2);
+  border: 1px solid var(--ds-border);
+  padding: 0.6rem 1.1rem;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.ds-about-cv-link:hover {
+  border-color: var(--ds-accent);
+  color: var(--ds-text);
+}
+
+/* stack photo + CV link vertically inside the sticky wrapper */
+.ds-about-photo-wrapper {
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
 /* в”Ђв”Ђв”Ђ Projects Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 .ds-projects-wrap {
   padding: 0 var(--ds-px);
