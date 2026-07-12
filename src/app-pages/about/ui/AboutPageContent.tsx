@@ -33,7 +33,7 @@ function CareerTimeline({ reduced }: { reduced: boolean | null }) {
     <div ref={ref} className="ds-timeline">
       {CAREER.map((event: CareerEvent, i: number) => (
         <motion.div
-          key={i}
+          key={`${event.year}-${event.title}`}
           className="ds-timeline-item"
           initial={reduced ? {} : { opacity: 0, filter: 'blur(8px)', y: 10 }}
           animate={
@@ -163,7 +163,7 @@ export function AboutPageContent({ tags, stats }: Props) {
               transition: { duration: 0.5, delay: 0.35, ease: EASE },
             })}
           >
-            ↓ Скачать резюме
+            <span aria-hidden="true">↓</span> Скачать резюме
           </motion.a>
         </div>
       </motion.aside>

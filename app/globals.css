@@ -683,8 +683,10 @@ img { max-width: 100%; display: block; }
   top: var(--ds-header-h);
   height: calc(100vh - var(--ds-header-h));
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1.25rem;
   padding: 3.5rem calc(var(--ds-px) * 0.85);
 }
 
@@ -876,12 +878,6 @@ img { max-width: 100%; display: block; }
 .ds-about-cv-link:hover {
   border-color: var(--ds-accent);
   color: var(--ds-text);
-}
-
-/* stack photo + CV link vertically inside the sticky wrapper */
-.ds-about-photo-wrapper {
-  flex-direction: column;
-  gap: 1.25rem;
 }
 
 /* в”Ђв”Ђв”Ђ Projects Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
