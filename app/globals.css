@@ -818,7 +818,7 @@ img { max-width: 100%; display: block; }
   height: 9px;
   border-radius: 50%;
   background: var(--ds-accent);
-  box-shadow: 0 0 8px rgba(153, 27, 27, 0.6);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--ds-accent) 60%, transparent);
 }
 
 .ds-timeline-dot--current {
@@ -830,8 +830,8 @@ img { max-width: 100%; display: block; }
 }
 
 @keyframes ds-timeline-pulse {
-  0%, 100% { box-shadow: 0 0 10px var(--ds-accent), 0 0 20px rgba(153, 27, 27, 0.3); }
-  50%       { box-shadow: 0 0 18px var(--ds-accent), 0 0 36px rgba(153, 27, 27, 0.45); }
+  0%, 100% { box-shadow: 0 0 10px var(--ds-accent), 0 0 20px color-mix(in srgb, var(--ds-accent) 30%, transparent); }
+  50%       { box-shadow: 0 0 18px var(--ds-accent), 0 0 36px color-mix(in srgb, var(--ds-accent) 45%, transparent); }
 }
 
 .ds-timeline-year {
