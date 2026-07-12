@@ -673,21 +673,17 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-about-right {
-  position: relative;
-  overflow: hidden;
-  min-height: 580px;
+  padding: 5rem var(--ds-px) 4rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .ds-about-photo-wrapper {
-  position: sticky;
-  top: var(--ds-header-h);
-  height: calc(100vh - var(--ds-header-h));
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 1.25rem;
-  padding: 3.5rem calc(var(--ds-px) * 0.85);
+  margin-top: 2.75rem;
 }
 
 .ds-about-photo-frame {
@@ -771,8 +767,7 @@ img { max-width: 100%; display: block; }
 @media (max-width: 900px) {
   .ds-about-layout            { grid-template-columns: 1fr; }
   .ds-about-left              { border-right: none; }
-  .ds-about-right             { border-top: 1px solid var(--ds-border); min-height: 480px; }
-  .ds-about-photo-wrapper     { position: static; height: 480px; }
+  .ds-about-right             { border-top: 1px solid var(--ds-border); padding: 3rem var(--ds-px); }
 }
 
 @media (max-width: 600px) {
@@ -782,8 +777,6 @@ img { max-width: 100%; display: block; }
 
 @media (max-width: 480px) {
   .ds-about-heading           { font-size: clamp(3rem, 14vw, 5rem); margin-bottom: 2rem; }
-  .ds-about-right             { min-height: 320px; }
-  .ds-about-photo-wrapper     { height: 320px; }
   .ds-about-stats             { padding-top: 1.75rem; gap: 1rem; }
   .ds-stat-num                { font-size: 2rem; }
 }

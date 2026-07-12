@@ -67,7 +67,7 @@ export function AboutPageContent({ tags, stats }: Props) {
 
   return (
     <main className="ds-about-layout">
-      {/* ── Left: text content ── */}
+      {/* ── Left: bio + photo + CV ── */}
       <section className="ds-about-left">
         <motion.div className="ds-about-eyebrow ds-eyebrow" {...fadeUp(0)}>
           02 / История
@@ -95,51 +95,14 @@ export function AboutPageContent({ tags, stats }: Props) {
           </p>
         </motion.div>
 
-        <motion.div className="ds-about-section-label" {...fadeUp(0.28)}>
-          Карьера
-        </motion.div>
-
-        <CareerTimeline reduced={reduced} />
-
-        <motion.div className="ds-about-section-label" {...fadeUp(0.32)}>
-          Ключевые навыки
-        </motion.div>
-
-        <motion.div className="ds-about-skills" {...fadeUp(0.36)}>
-          {tags.map((tag) => (
-            <Link
-              key={tag.id}
-              href={`/projects?tag=${encodeURIComponent(tag.name)}`}
-              className="ds-tag"
-            >
-              {tag.name}
-            </Link>
-          ))}
-        </motion.div>
-
-        <motion.div className="ds-about-stats" {...fadeUp(0.46)}>
-          {stats.map((s) => (
-            <div key={s.label}>
-              <div className="ds-stat-num">
-                <CounterNumber value={s.value} suffix={s.suffix} />
-              </div>
-              <div className="ds-stat-label">{s.label}</div>
-            </div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* ── Right: photo + CV link ── */}
-      <motion.aside
-        className="ds-about-right"
-        aria-label="Фото"
-        {...(reduced ? {} : {
-          initial: { opacity: 0, x: 20 },
-          animate: { opacity: 1, x: 0 },
-          transition: { duration: 0.6, delay: 0.2, ease: EASE },
-        })}
-      >
-        <div className="ds-about-photo-wrapper">
+        <motion.div
+          className="ds-about-photo-wrapper"
+          {...(reduced ? {} : {
+            initial: { opacity: 0, y: 16 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.6, delay: 0.28, ease: EASE },
+          })}
+        >
           <div className="ds-about-photo-frame">
             <div className="ds-about-photo">
               <Image
@@ -160,13 +123,49 @@ export function AboutPageContent({ tags, stats }: Props) {
             {...(reduced ? {} : {
               initial: { opacity: 0 },
               animate: { opacity: 1 },
-              transition: { duration: 0.5, delay: 0.35, ease: EASE },
+              transition: { duration: 0.5, delay: 0.42, ease: EASE },
             })}
           >
             <span aria-hidden="true">↓</span> Скачать резюме
           </motion.a>
-        </div>
-      </motion.aside>
+        </motion.div>
+      </section>
+
+      {/* ── Right: career + skills + stats ── */}
+      <section className="ds-about-right">
+        <motion.div className="ds-about-section-label" {...fadeUp(0.1)}>
+          Карьера
+        </motion.div>
+
+        <CareerTimeline reduced={reduced} />
+
+        <motion.div className="ds-about-section-label" {...fadeUp(0.16)}>
+          Ключевые навыки
+        </motion.div>
+
+        <motion.div className="ds-about-skills" {...fadeUp(0.2)}>
+          {tags.map((tag) => (
+            <Link
+              key={tag.id}
+              href={`/projects?tag=${encodeURIComponent(tag.name)}`}
+              className="ds-tag"
+            >
+              {tag.name}
+            </Link>
+          ))}
+        </motion.div>
+
+        <motion.div className="ds-about-stats" {...fadeUp(0.28)}>
+          {stats.map((s) => (
+            <div key={s.label}>
+              <div className="ds-stat-num">
+                <CounterNumber value={s.value} suffix={s.suffix} />
+              </div>
+              <div className="ds-stat-label">{s.label}</div>
+            </div>
+          ))}
+        </motion.div>
+      </section>
     </main>
   );
 }
