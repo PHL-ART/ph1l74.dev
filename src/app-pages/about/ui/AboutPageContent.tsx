@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useReducedMotion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useReducedMotion, useInView } from 'framer-motion';
 import { CounterNumber } from '@/shared/ui/CounterNumber';
+import { CAREER, type CareerEvent } from './career';
 
 interface Tag {
   id: number;
@@ -22,6 +24,34 @@ interface Props {
 }
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+function CareerTimeline({ reduced }: { reduced: boolean | null }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+
+  return (
+    <div ref={ref} className="ds-timeline">
+      {CAREER.map((event: CareerEvent, i: number) => (
+        <motion.div
+          key={`${event.year}-${event.title}`}
+          className="ds-timeline-item"
+          initial={reduced ? {} : { opacity: 0, filter: 'blur(8px)', y: 10 }}
+          animate={
+            reduced || inView
+              ? { opacity: 1, filter: 'blur(0px)', y: 0 }
+              : { opacity: 0, filter: 'blur(8px)', y: 10 }
+          }
+          transition={{ duration: 0.5, delay: i * 0.12, ease: EASE }}
+        >
+          <div className={`ds-timeline-dot${event.current ? ' ds-timeline-dot--current' : ''}`} />
+          <div className="ds-timeline-year">{event.year}</div>
+          <div className="ds-timeline-title">{event.title}</div>
+          <div className="ds-timeline-sub">{event.subtitle}</div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
 
 export function AboutPageContent({ tags, stats }: Props) {
   const reduced = useReducedMotion();
@@ -66,10 +96,16 @@ export function AboutPageContent({ tags, stats }: Props) {
         </motion.div>
 
         <motion.div className="ds-about-section-label" {...fadeUp(0.28)}>
+          Карьера
+        </motion.div>
+
+        <CareerTimeline reduced={reduced} />
+
+        <motion.div className="ds-about-section-label" {...fadeUp(0.32)}>
           Ключевые навыки
         </motion.div>
 
-        <motion.div className="ds-about-skills" {...fadeUp(0.32)}>
+        <motion.div className="ds-about-skills" {...fadeUp(0.36)}>
           {tags.map((tag) => (
             <Link
               key={tag.id}
@@ -81,7 +117,7 @@ export function AboutPageContent({ tags, stats }: Props) {
           ))}
         </motion.div>
 
-        <motion.div className="ds-about-stats" {...fadeUp(0.42)}>
+        <motion.div className="ds-about-stats" {...fadeUp(0.46)}>
           {stats.map((s) => (
             <div key={s.label}>
               <div className="ds-stat-num">
@@ -93,7 +129,7 @@ export function AboutPageContent({ tags, stats }: Props) {
         </motion.div>
       </section>
 
-      {/* ── Right: photo ── */}
+      {/* ── Right: photo + CV link ── */}
       <motion.aside
         className="ds-about-right"
         aria-label="Фото"
@@ -116,6 +152,19 @@ export function AboutPageContent({ tags, stats }: Props) {
               />
             </div>
           </div>
+
+          <motion.a
+            href="/assets/cv/filat-astakhov-cv.pdf"
+            download
+            className="ds-about-cv-link"
+            {...(reduced ? {} : {
+              initial: { opacity: 0 },
+              animate: { opacity: 1 },
+              transition: { duration: 0.5, delay: 0.35, ease: EASE },
+            })}
+          >
+            <span aria-hidden="true">↓</span> Скачать резюме
+          </motion.a>
         </div>
       </motion.aside>
     </main>
