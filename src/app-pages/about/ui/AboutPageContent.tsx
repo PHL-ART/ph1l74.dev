@@ -67,7 +67,7 @@ export function AboutPageContent({ tags, stats }: Props) {
 
   return (
     <main className="ds-about-layout">
-      {/* ── Left: bio + photo + CV ── */}
+      {/* ── Left: bio text ── */}
       <section className="ds-about-left">
         <motion.div className="ds-about-eyebrow ds-eyebrow" {...fadeUp(0)}>
           02 / История
@@ -94,22 +94,26 @@ export function AboutPageContent({ tags, stats }: Props) {
             WebGL-шейдеры и интерактивные инсталляции на стыке дизайна и инженерии.
           </p>
         </motion.div>
+      </section>
 
-        <motion.div
-          className="ds-about-photo-wrapper"
-          {...(reduced ? {} : {
-            initial: { opacity: 0, y: 16 },
-            animate: { opacity: 1, y: 0 },
-            transition: { duration: 0.6, delay: 0.28, ease: EASE },
-          })}
-        >
+      {/* ── Center: photo + CV (sticky) ── */}
+      <motion.aside
+        className="ds-about-center"
+        aria-label="Фото"
+        {...(reduced ? {} : {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 0.7, delay: 0.15, ease: EASE },
+        })}
+      >
+        <div className="ds-about-photo-wrapper">
           <div className="ds-about-photo-frame">
             <div className="ds-about-photo">
               <Image
                 src="/assets/images/myphoto.jpg"
                 alt="Филат Астахов"
                 fill
-                sizes="(max-width: 900px) 100vw, 50vw"
+                sizes="(max-width: 900px) 100vw, 33vw"
                 style={{ objectFit: 'cover', objectPosition: 'center 12%' }}
                 priority
               />
@@ -123,13 +127,13 @@ export function AboutPageContent({ tags, stats }: Props) {
             {...(reduced ? {} : {
               initial: { opacity: 0 },
               animate: { opacity: 1 },
-              transition: { duration: 0.5, delay: 0.42, ease: EASE },
+              transition: { duration: 0.5, delay: 0.35, ease: EASE },
             })}
           >
             <span aria-hidden="true">↓</span> Скачать резюме
           </motion.a>
-        </motion.div>
-      </section>
+        </div>
+      </motion.aside>
 
       {/* ── Right: career + skills + stats ── */}
       <section className="ds-about-right">

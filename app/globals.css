@@ -588,7 +588,7 @@ img { max-width: 100%; display: block; }
 .ds-about-layout {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 0.8fr 1fr;
   border-top: 1px solid var(--ds-border);
 }
 
@@ -672,6 +672,12 @@ img { max-width: 100%; display: block; }
   color: var(--ds-text-2);
 }
 
+.ds-about-center {
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--ds-border);
+}
+
 .ds-about-right {
   padding: 5rem var(--ds-px) 4rem;
   display: flex;
@@ -679,11 +685,15 @@ img { max-width: 100%; display: block; }
 }
 
 .ds-about-photo-wrapper {
+  position: sticky;
+  top: var(--ds-header-h);
+  height: calc(100vh - var(--ds-header-h));
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 1.25rem;
-  margin-top: 2.75rem;
+  padding: 3.5rem calc(var(--ds-px) * 0.85);
 }
 
 .ds-about-photo-frame {
@@ -767,6 +777,8 @@ img { max-width: 100%; display: block; }
 @media (max-width: 900px) {
   .ds-about-layout            { grid-template-columns: 1fr; }
   .ds-about-left              { border-right: none; }
+  .ds-about-center            { border-right: none; border-top: 1px solid var(--ds-border); min-height: 480px; }
+  .ds-about-photo-wrapper     { position: static; height: 480px; }
   .ds-about-right             { border-top: 1px solid var(--ds-border); padding: 3rem var(--ds-px); }
 }
 
