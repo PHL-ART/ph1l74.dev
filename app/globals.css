@@ -1448,6 +1448,17 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   color: var(--ds-text);
   margin-bottom: 2.5rem;
   max-width: 16ch;
+  word-break: break-word;
+}
+
+.ds-project-hero-title--md {
+  font-size: clamp(2.8rem, 6vw, 7rem);
+  max-width: none;
+}
+
+.ds-project-hero-title--lg {
+  font-size: clamp(1.8rem, 4vw, 5rem);
+  max-width: none;
 }
 
 .ds-project-hero-desc {

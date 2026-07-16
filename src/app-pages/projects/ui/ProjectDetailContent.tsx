@@ -35,6 +35,10 @@ export function ProjectDetailContent({
   const reduced = useReducedMotion();
   const ghostChar = title?.[0]?.toUpperCase() ?? 'P';
 
+  const titleModifier =
+    title.length > 45 ? 'ds-project-hero-title--lg' :
+    title.length > 20 ? 'ds-project-hero-title--md' : '';
+
   const fadeUp = (delay: number, y = 14) =>
     reduced
       ? {}
@@ -73,7 +77,10 @@ export function ProjectDetailContent({
               {categories.join(' · ')}
             </motion.div>
           )}
-          <motion.h1 className="ds-project-hero-title" {...fadeUp(0.08)}>
+          <motion.h1
+            className={`ds-project-hero-title${titleModifier ? ` ${titleModifier}` : ''}`}
+            {...fadeUp(0.08)}
+          >
             {title}
           </motion.h1>
           {links.length > 0 && (
