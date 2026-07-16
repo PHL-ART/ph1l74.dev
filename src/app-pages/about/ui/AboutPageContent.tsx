@@ -67,7 +67,7 @@ export function AboutPageContent({ tags, stats }: Props) {
 
   return (
     <main className="ds-about-layout">
-      {/* ── Left: text content ── */}
+      {/* ── Left: bio text ── */}
       <section className="ds-about-left">
         <motion.div className="ds-about-eyebrow ds-eyebrow" {...fadeUp(0)}>
           02 / История
@@ -96,16 +96,10 @@ export function AboutPageContent({ tags, stats }: Props) {
         </motion.div>
 
         <motion.div className="ds-about-section-label" {...fadeUp(0.28)}>
-          Карьера
-        </motion.div>
-
-        <CareerTimeline reduced={reduced} />
-
-        <motion.div className="ds-about-section-label" {...fadeUp(0.32)}>
           Ключевые навыки
         </motion.div>
 
-        <motion.div className="ds-about-skills" {...fadeUp(0.36)}>
+        <motion.div className="ds-about-skills" {...fadeUp(0.32)}>
           {tags.map((tag) => (
             <Link
               key={tag.id}
@@ -116,27 +110,16 @@ export function AboutPageContent({ tags, stats }: Props) {
             </Link>
           ))}
         </motion.div>
-
-        <motion.div className="ds-about-stats" {...fadeUp(0.46)}>
-          {stats.map((s) => (
-            <div key={s.label}>
-              <div className="ds-stat-num">
-                <CounterNumber value={s.value} suffix={s.suffix} />
-              </div>
-              <div className="ds-stat-label">{s.label}</div>
-            </div>
-          ))}
-        </motion.div>
       </section>
 
-      {/* ── Right: photo + CV link ── */}
+      {/* ── Center: photo + CV (sticky) ── */}
       <motion.aside
-        className="ds-about-right"
+        className="ds-about-center"
         aria-label="Фото"
         {...(reduced ? {} : {
-          initial: { opacity: 0, x: 20 },
-          animate: { opacity: 1, x: 0 },
-          transition: { duration: 0.6, delay: 0.2, ease: EASE },
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 0.7, delay: 0.15, ease: EASE },
         })}
       >
         <div className="ds-about-photo-wrapper">
@@ -146,7 +129,7 @@ export function AboutPageContent({ tags, stats }: Props) {
                 src="/assets/images/myphoto.jpg"
                 alt="Филат Астахов"
                 fill
-                sizes="(max-width: 900px) 100vw, 50vw"
+                sizes="(max-width: 900px) 100vw, 33vw"
                 style={{ objectFit: 'cover', objectPosition: 'center 12%' }}
                 priority
               />
@@ -165,8 +148,32 @@ export function AboutPageContent({ tags, stats }: Props) {
           >
             <span aria-hidden="true">↓</span> Скачать резюме
           </motion.a>
+
+          <motion.div className="ds-about-stats" {...(reduced ? {} : {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            transition: { duration: 0.5, delay: 0.45, ease: EASE },
+          })}>
+            {stats.map((s) => (
+              <div key={s.label}>
+                <div className="ds-stat-num">
+                  <CounterNumber value={s.value} suffix={s.suffix} />
+                </div>
+                <div className="ds-stat-label">{s.label}</div>
+              </div>
+            ))}
+          </motion.div>
         </div>
       </motion.aside>
+
+      {/* ── Right: career timeline (vertically centered) ── */}
+      <section className="ds-about-right">
+        <motion.div className="ds-about-section-label" {...fadeUp(0.1)}>
+          Карьера
+        </motion.div>
+
+        <CareerTimeline reduced={reduced} />
+      </section>
     </main>
   );
 }
