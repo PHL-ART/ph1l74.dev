@@ -76,9 +76,6 @@ export function ProjectDetailContent({
           <motion.h1 className="ds-project-hero-title" {...fadeUp(0.08)}>
             {title}
           </motion.h1>
-          <motion.p className="ds-project-hero-desc" {...fadeUp(0.18)}>
-            {description}
-          </motion.p>
           {links.length > 0 && (
             <motion.nav
               className="ds-project-hero-links"
