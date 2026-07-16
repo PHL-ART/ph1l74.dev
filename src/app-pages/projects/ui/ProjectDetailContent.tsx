@@ -19,6 +19,7 @@ interface ProjectDetailContentProps {
   tags: string[];
   images: GalleryImage[];
   links: ProjectLink[];
+  isActive: boolean;
 }
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -31,6 +32,7 @@ export function ProjectDetailContent({
   tags,
   images,
   links,
+  isActive,
 }: ProjectDetailContentProps) {
   const reduced = useReducedMotion();
   const ghostChar = title?.[0]?.toUpperCase() ?? 'P';
@@ -121,6 +123,13 @@ export function ProjectDetailContent({
         </motion.section>
 
         <motion.aside className="ds-project-sidebar" {...fadeUp(0.48, 10)}>
+          <div className="ds-project-sidebar-block">
+            <div className="ds-project-sidebar-label">Статус</div>
+            <span className={`ds-project-status ds-project-status--${isActive ? 'active' : 'inactive'}`}>
+              {isActive ? 'Активный' : 'Неактивный'}
+            </span>
+          </div>
+
           {tags.length > 0 && (
             <div className="ds-project-sidebar-block">
               <div className="ds-project-sidebar-label">Теги</div>

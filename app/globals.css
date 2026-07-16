@@ -1513,6 +1513,22 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   z-index: 0;
 }
 
+.ds-project-status {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: default;
+  user-select: none;
+}
+
+.ds-project-status--active {
+  color: var(--ds-accent);
+}
+
+.ds-project-status--inactive {
+  color: var(--ds-text-3);
+}
+
 /* Body two-column */
 .ds-project-body {
   flex: 1;

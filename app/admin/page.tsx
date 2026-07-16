@@ -46,6 +46,7 @@ export default function AdminPage() {
     url: '',
     categoryIds: [] as number[],
     tagIds: [] as number[],
+    isActive: true,
   });
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
 
@@ -148,6 +149,7 @@ export default function AdminPage() {
     setProjectForm({
       shortname: '', title: '', year: new Date().getFullYear(),
       description: '', url: '', categoryIds: [], tagIds: [],
+      isActive: true,
     });
     setEditingProjectId(null);
   };
@@ -172,6 +174,7 @@ export default function AdminPage() {
       description: project.description, url: project.url || '',
       categoryIds: project.categories?.map((c) => c.id) || [],
       tagIds: project.tags?.map((t) => t.tagId) || [],
+      isActive: project.isActive,
     });
   };
 
@@ -480,8 +483,8 @@ type ProjectsViewProps = {
   tags: Tag[];
   setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
   setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
-  form: { shortname: string; title: string; year: number; description: string; url: string; categoryIds: number[]; tagIds: number[] };
-  setForm: React.Dispatch<React.SetStateAction<{ shortname: string; title: string; year: number; description: string; url: string; categoryIds: number[]; tagIds: number[] }>>;
+  form: { shortname: string; title: string; year: number; description: string; url: string; categoryIds: number[]; tagIds: number[]; isActive: boolean };
+  setForm: React.Dispatch<React.SetStateAction<{ shortname: string; title: string; year: number; description: string; url: string; categoryIds: number[]; tagIds: number[]; isActive: boolean }>>;
   onSubmit: () => Promise<void>;
   onEdit: (project: ProjectWithRelations) => void;
   onDelete: (id: number) => void;
@@ -669,6 +672,17 @@ function ProjectsView({
               onChange={(e) => setForm((s) => ({ ...s, url: e.target.value }))}
               placeholder="https://example.com"
             />
+          </div>
+          <div className="ds-admin-field">
+            <label className="ds-admin-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={form.isActive}
+                onChange={(e) => setForm((s) => ({ ...s, isActive: e.target.checked }))}
+                style={{ width: '14px', height: '14px', accentColor: 'rgb(153,27,27)', cursor: 'pointer' }}
+              />
+              Активный проект
+            </label>
           </div>
           <div className="ds-admin-field">
             <label className="ds-admin-label">Категории</label>

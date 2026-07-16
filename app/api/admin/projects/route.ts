@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
     tagIds = [],
     images = [],
     links = [],
+    isActive = true,
   } = body;
 
   if (!shortname || !title || !description || !year) {
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
         title,
         year: Number(year),
         description,
+        isActive: Boolean(isActive),
         url,
         categories:
           categoryIds && Array.isArray(categoryIds)

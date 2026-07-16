@@ -20,6 +20,7 @@ model Project {
   title       String
   year        Int
   description String
+  isActive    Boolean         @default(true)
   url         String?
   images      Image[]         // Связь с моделью Image
   categories  Category[]      // Связь с рубриками
