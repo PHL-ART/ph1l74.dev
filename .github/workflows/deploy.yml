@@ -65,6 +65,8 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
+            set -e
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.VPS_USER }} --password-stdin
             cd /home/projects/ph1l74.dev
             docker compose pull ph1l74-dev
             docker compose up -d --no-deps --no-build ph1l74-dev
