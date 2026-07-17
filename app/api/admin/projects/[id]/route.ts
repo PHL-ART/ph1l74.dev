@@ -54,6 +54,7 @@ export async function PUT(
     url,
     categoryIds = [],
     tagIds = [],
+    isActive = true,
   } = body;
 
   if (!shortname || !title || !description || !year) {
@@ -71,6 +72,7 @@ export async function PUT(
         title,
         year: Number(year),
         description,
+        isActive: Boolean(isActive),
         url,
         categories:
           categoryIds && Array.isArray(categoryIds)

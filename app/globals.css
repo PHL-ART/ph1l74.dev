@@ -1146,6 +1146,11 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   line-height: 1.75;
   max-width: 58ch;
   margin-top: 0.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .ds-project-tags {
@@ -1448,6 +1453,17 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   color: var(--ds-text);
   margin-bottom: 2.5rem;
   max-width: 16ch;
+  word-break: break-word;
+}
+
+.ds-project-hero-title--md {
+  font-size: clamp(2.8rem, 6vw, 7rem);
+  max-width: none;
+}
+
+.ds-project-hero-title--lg {
+  font-size: clamp(1.8rem, 4vw, 5rem);
+  max-width: none;
 }
 
 .ds-project-hero-desc {
@@ -1500,6 +1516,22 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   letter-spacing: -0.04em;
   text-transform: uppercase;
   z-index: 0;
+}
+
+.ds-project-status {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: default;
+  user-select: none;
+}
+
+.ds-project-status--active {
+  color: var(--ds-accent);
+}
+
+.ds-project-status--inactive {
+  color: var(--ds-text-3);
 }
 
 /* Body two-column */

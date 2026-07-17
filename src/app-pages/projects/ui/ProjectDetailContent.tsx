@@ -19,6 +19,7 @@ interface ProjectDetailContentProps {
   tags: string[];
   images: GalleryImage[];
   links: ProjectLink[];
+  isActive: boolean;
 }
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -31,9 +32,14 @@ export function ProjectDetailContent({
   tags,
   images,
   links,
+  isActive,
 }: ProjectDetailContentProps) {
   const reduced = useReducedMotion();
   const ghostChar = title?.[0]?.toUpperCase() ?? 'P';
+
+  const titleModifier =
+    title.length > 45 ? 'ds-project-hero-title--lg' :
+    title.length > 20 ? 'ds-project-hero-title--md' : '';
 
   const fadeUp = (delay: number, y = 14) =>
     reduced
@@ -73,12 +79,12 @@ export function ProjectDetailContent({
               {categories.join(' · ')}
             </motion.div>
           )}
-          <motion.h1 className="ds-project-hero-title" {...fadeUp(0.08)}>
+          <motion.h1
+            className={`ds-project-hero-title${titleModifier ? ` ${titleModifier}` : ''}`}
+            {...fadeUp(0.08)}
+          >
             {title}
           </motion.h1>
-          <motion.p className="ds-project-hero-desc" {...fadeUp(0.18)}>
-            {description}
-          </motion.p>
           {links.length > 0 && (
             <motion.nav
               className="ds-project-hero-links"
@@ -117,6 +123,13 @@ export function ProjectDetailContent({
         </motion.section>
 
         <motion.aside className="ds-project-sidebar" {...fadeUp(0.48, 10)}>
+          <div className="ds-project-sidebar-block">
+            <div className="ds-project-sidebar-label">Статус</div>
+            <span className={`ds-project-status ds-project-status--${isActive ? 'active' : 'inactive'}`}>
+              {isActive ? 'Активный' : 'Неактивный'}
+            </span>
+          </div>
+
           {tags.length > 0 && (
             <div className="ds-project-sidebar-block">
               <div className="ds-project-sidebar-label">Теги</div>

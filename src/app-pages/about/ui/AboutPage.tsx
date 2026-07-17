@@ -6,7 +6,7 @@ export const AboutPage = async () => {
     prisma.project.count(),
     prisma.project.aggregate({ _min: { year: true } }),
     prisma.tag.count(),
-    prisma.tag.findMany({ orderBy: { name: 'asc' } }),
+    prisma.tag.findMany({ orderBy: { projects: { _count: 'desc' } } }),
   ]);
 
   const startYear = yearAgg._min.year ?? new Date().getFullYear();

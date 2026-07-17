@@ -54,6 +54,7 @@ export default async function ProjectPage({
       tags={project.tags.map((t) => t.tag.name)}
       images={project.images}
       links={project.links}
+      isActive={project.isActive}
     />
   );
 }
