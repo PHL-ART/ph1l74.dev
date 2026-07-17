@@ -47,26 +47,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Copy docker-compose.yml to VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          source: docker-compose.yml
-          target: /home/projects/ph1l74.dev/
-
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             set -e
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.VPS_USER }} --password-stdin
             cd /home/projects/ph1l74.dev
             docker compose pull ph1l74-dev
             docker compose up -d --no-deps --no-build ph1l74-dev
