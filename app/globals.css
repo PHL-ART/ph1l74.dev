@@ -1146,6 +1146,11 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   line-height: 1.75;
   max-width: 58ch;
   margin-top: 0.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .ds-project-tags {
