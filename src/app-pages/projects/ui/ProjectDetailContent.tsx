@@ -20,6 +20,7 @@ interface ProjectDetailContentProps {
   images: GalleryImage[];
   links: ProjectLink[];
   isActive: boolean;
+  url?: string | null;
 }
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -33,6 +34,7 @@ export function ProjectDetailContent({
   images,
   links,
   isActive,
+  url,
 }: ProjectDetailContentProps) {
   const reduced = useReducedMotion();
   const ghostChar = title?.[0]?.toUpperCase() ?? 'P';
@@ -111,27 +113,38 @@ export function ProjectDetailContent({
 
       {/* Body */}
       <div className="ds-project-body">
-        <motion.section className="ds-project-desc-col" {...fadeUp(0.32, 8)}>
+        <div className="ds-project-left-col">
           {images.length > 0 && (
-            <ProjectGallery images={images} />
+            <motion.div {...fadeUp(0.32, 8)}>
+              <ProjectGallery images={images} />
+            </motion.div>
           )}
-          <div className="ds-project-body-label">Обзор</div>
-          <div className="ds-project-full-desc">
-            <p>{description}</p>
-          </div>
-        </motion.section>
 
-        <motion.aside className="ds-project-sidebar" {...fadeUp(0.40, 10)}>
-          <div className="ds-project-sidebar-block">
-            <div className="ds-project-sidebar-label">Статус</div>
+          <motion.section className="ds-project-desc-col" {...fadeUp(images.length > 0 ? 0.48 : 0.32, 10)}>
+            <div className="ds-project-body-label">Обзор</div>
+            <div className="ds-project-full-desc">
+              <p>{description}</p>
+            </div>
+          </motion.section>
+        </div>
+
+        <motion.aside className="ds-project-sidebar" {...fadeUp(images.length > 0 ? 0.56 : 0.40, 10)}>
+
+          <div className="ds-project-sidebar-section">
+            <div className="ds-project-body-label">Статус</div>
             <span className={`ds-project-status ds-project-status--${isActive ? 'active' : 'inactive'}`}>
               {isActive ? 'Активный' : 'Неактивный'}
             </span>
           </div>
 
+          <div className="ds-project-sidebar-section">
+            <div className="ds-project-body-label">Год</div>
+            <div className="ds-project-sidebar-value">{year}</div>
+          </div>
+
           {tags.length > 0 && (
-            <div className="ds-project-sidebar-block">
-              <div className="ds-project-sidebar-label">Теги</div>
+            <div className="ds-project-sidebar-section">
+              <div className="ds-project-body-label">Теги</div>
               <div className="ds-project-tags-wrap">
                 {tags.map((tag) => (
                   <Link
@@ -146,34 +159,9 @@ export function ProjectDetailContent({
             </div>
           )}
 
-          {links.length > 0 && (
-            <div className="ds-project-sidebar-block">
-              <div className="ds-project-sidebar-label">Ссылки</div>
-              <nav className="ds-project-sidebar-links">
-                {links.map((link) => (
-                  <a
-                    key={link.id}
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="ds-project-sidebar-link"
-                  >
-                    <span>{link.name}</span>
-                    <span className="ds-project-sidebar-arrow" aria-hidden="true">↗︎</span>
-                  </a>
-                ))}
-              </nav>
-            </div>
-          )}
-
-          <div className="ds-project-sidebar-block">
-            <div className="ds-project-sidebar-label">Год</div>
-            <div className="ds-project-sidebar-value">{year}</div>
-          </div>
-
           {categories.length > 0 && (
-            <div className="ds-project-sidebar-block">
-              <div className="ds-project-sidebar-label">
+            <div className="ds-project-sidebar-section">
+              <div className="ds-project-body-label">
                 {categories.length === 1 ? 'Категория' : 'Категории'}
               </div>
               <div className="ds-project-tags-wrap">
@@ -185,6 +173,37 @@ export function ProjectDetailContent({
                   >
                     {cat}
                   </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {(url || links.length > 0) && (
+            <div className="ds-project-sidebar-section">
+              <div className="ds-project-body-label">Ссылки</div>
+              <div className="ds-project-visit-links">
+                {url && (
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="ds-project-visit-link"
+                  >
+                    <span>Посмотреть</span>
+                    <span className="ds-project-visit-arrow" aria-hidden="true">↗︎</span>
+                  </a>
+                )}
+                {links.map((link) => (
+                  <a
+                    key={link.id}
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="ds-project-visit-link"
+                  >
+                    <span>{link.name}</span>
+                    <span className="ds-project-visit-arrow" aria-hidden="true">↗︎</span>
+                  </a>
                 ))}
               </div>
             </div>
