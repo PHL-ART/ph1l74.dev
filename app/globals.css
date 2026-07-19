@@ -682,7 +682,8 @@ img { max-width: 100%; display: block; }
   padding: 5rem var(--ds-px) 4rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 2.75rem;
 }
 
 .ds-about-photo-wrapper {
@@ -692,9 +693,27 @@ img { max-width: 100%; display: block; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 1.25rem;
   padding: 3.5rem calc(var(--ds-px) * 0.85);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.ds-about-photo-wrapper::-webkit-scrollbar { display: none; }
+
+.ds-about-center-skills {
+  width: 100%;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ds-border);
+}
+
+.ds-about-center-skills .ds-about-section-label {
+  margin-bottom: 0.75rem;
+}
+
+.ds-about-center-skills .ds-about-skills {
+  margin-bottom: 0;
 }
 
 .ds-about-photo-wrapper .ds-about-stats {
@@ -786,9 +805,12 @@ img { max-width: 100%; display: block; }
 @media (max-width: 900px) {
   .ds-about-layout            { grid-template-columns: 1fr; }
   .ds-about-left              { border-right: none; }
-  .ds-about-center            { border-right: none; border-top: 1px solid var(--ds-border); min-height: 480px; }
-  .ds-about-photo-wrapper     { position: static; height: 480px; }
-  .ds-about-right             { border-top: 1px solid var(--ds-border); padding: 3rem var(--ds-px); }
+  .ds-about-center            { border-right: none; border-top: 1px solid var(--ds-border); }
+  .ds-about-photo-wrapper     { position: static; height: auto; overflow-y: visible; padding: 2.5rem var(--ds-px); }
+  .ds-about-photo-frame       { aspect-ratio: unset; height: 340px; }
+  .ds-about-photo-frame .ds-about-photo { height: 340px; }
+  .ds-about-right             { border-top: 1px solid var(--ds-border); padding: 3rem var(--ds-px); gap: 2rem; }
+  .ds-about-cv-link           { margin-top: 0; }
 }
 
 @media (max-width: 600px) {
@@ -877,16 +899,19 @@ img { max-width: 100%; display: block; }
 .ds-about-cv-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
-  font-size: 0.55rem;
+  font-size: 0.7rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ds-text-2);
   border: 1px solid var(--ds-border);
-  padding: 0.6rem 1.1rem;
+  padding: 1rem 2rem;
   text-decoration: none;
   transition: border-color 0.2s, color 0.2s;
+  width: 100%;
+  justify-content: center;
+  margin-top: auto;
 }
 
 .ds-about-cv-link:hover {
@@ -1140,6 +1165,24 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   padding: 0.18rem 0.45rem;
 }
 
+.ds-project-active-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--ds-accent);
+  flex-shrink: 0;
+  animation: ds-square-blink 2.4s ease-in-out infinite;
+  margin-right: 0.45rem;
+  vertical-align: middle;
+  position: relative;
+  top: -0.5px;
+}
+
+@keyframes ds-square-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+
 .ds-project-desc {
   font-size: 0.82rem;
   color: var(--ds-text-2);
@@ -1213,7 +1256,16 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   -webkit-text-stroke: 1.5px var(--ds-text-3);
 }
 
-.ds-contacts-hero-title .dot { color: var(--ds-accent); }
+.ds-contacts-hero-title .dot {
+  color: var(--ds-accent);
+  -webkit-text-stroke: 0;
+  animation: ds-dot-blink 2.8s ease-in-out infinite;
+}
+
+@keyframes ds-dot-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.15; }
+}
 
 .ds-contacts-intro {
   font-size: 0.88rem;
@@ -1519,19 +1571,25 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-project-status {
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-family: var(--font-jetbrains-mono, 'JetBrains Mono', monospace);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--ds-border);
+  white-space: nowrap;
   cursor: default;
   user-select: none;
+  display: inline-block;
 }
 
 .ds-project-status--active {
   color: var(--ds-accent);
+  border-color: var(--ds-accent-dim);
 }
 
 .ds-project-status--inactive {
-  color: var(--ds-text-3);
+  color: var(--ds-text-2);
 }
 
 /* Body two-column */
