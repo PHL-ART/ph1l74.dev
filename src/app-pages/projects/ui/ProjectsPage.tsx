@@ -114,7 +114,7 @@ export const ProjectsPage = () => {
           style={{ color: 'var(--ds-text-2)' }}>
           <span className="h-4 w-4 animate-spin rounded-full border border-t-transparent"
             style={{ borderColor: 'var(--ds-accent)', borderTopColor: 'transparent' }} />
-          Loading...
+          Загружаю...
         </div>
       )}
 

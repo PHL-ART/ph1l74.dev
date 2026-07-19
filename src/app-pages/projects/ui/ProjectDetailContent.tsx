@@ -109,20 +109,19 @@ export function ProjectDetailContent({
         <span className="ds-project-hero-ghost" aria-hidden="true">{ghostChar}</span>
       </header>
 
-      <motion.div {...fadeUp(0.32, 8)}>
-        <ProjectGallery images={images} />
-      </motion.div>
-
       {/* Body */}
       <div className="ds-project-body">
-        <motion.section className="ds-project-desc-col" {...fadeUp(0.40, 10)}>
+        <motion.section className="ds-project-desc-col" {...fadeUp(0.32, 8)}>
+          {images.length > 0 && (
+            <ProjectGallery images={images} />
+          )}
           <div className="ds-project-body-label">Обзор</div>
           <div className="ds-project-full-desc">
             <p>{description}</p>
           </div>
         </motion.section>
 
-        <motion.aside className="ds-project-sidebar" {...fadeUp(0.48, 10)}>
+        <motion.aside className="ds-project-sidebar" {...fadeUp(0.40, 10)}>
           <div className="ds-project-sidebar-block">
             <div className="ds-project-sidebar-label">Статус</div>
             <span className={`ds-project-status ds-project-status--${isActive ? 'active' : 'inactive'}`}>
