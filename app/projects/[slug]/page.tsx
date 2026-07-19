@@ -55,6 +55,7 @@ export default async function ProjectPage({
       images={project.images}
       links={project.links}
       isActive={project.isActive}
+      url={project.url}
     />
   );
 }

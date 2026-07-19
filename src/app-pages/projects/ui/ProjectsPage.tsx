@@ -14,6 +14,7 @@ type ProjectItem = {
   title: string;
   year: number;
   description: string;
+  isActive?: boolean;
   url?: string;
   categories?: { id: number; name: string }[];
   tags?: { id: number; tagId: number; tag: { id: number; name: string } }[];
@@ -113,7 +114,7 @@ export const ProjectsPage = () => {
           style={{ color: 'var(--ds-text-2)' }}>
           <span className="h-4 w-4 animate-spin rounded-full border border-t-transparent"
             style={{ borderColor: 'var(--ds-accent)', borderTopColor: 'transparent' }} />
-          Loading...
+          Загружаю...
         </div>
       )}
 
@@ -173,7 +174,10 @@ export const ProjectsPage = () => {
                   </h2>
                 </div>
 
-                <div className="ds-project-year">{p.year}</div>
+                <div className="ds-project-year">
+                  {p.isActive && <span className="ds-project-active-dot" aria-label="Активный" />}
+                  {p.year}
+                </div>
 
                 <div className="ds-project-desc-cell">
                   <p className="ds-project-desc">{p.description}</p>

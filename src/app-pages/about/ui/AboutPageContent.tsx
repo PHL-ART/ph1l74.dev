@@ -95,24 +95,9 @@ export function AboutPageContent({ tags, stats }: Props) {
           </p>
         </motion.div>
 
-        <motion.div className="ds-about-section-label" {...fadeUp(0.28)}>
-          Ключевые навыки
-        </motion.div>
-
-        <motion.div className="ds-about-skills" {...fadeUp(0.32)}>
-          {tags.map((tag) => (
-            <Link
-              key={tag.id}
-              href={`/projects?tag=${encodeURIComponent(tag.name)}`}
-              className="ds-tag"
-            >
-              {tag.name}
-            </Link>
-          ))}
-        </motion.div>
       </section>
 
-      {/* ── Center: photo + CV (sticky) ── */}
+      {/* ── Center: photo + stats + skills (sticky) ── */}
       <motion.aside
         className="ds-about-center"
         aria-label="Фото"
@@ -136,23 +121,10 @@ export function AboutPageContent({ tags, stats }: Props) {
             </div>
           </div>
 
-          <motion.a
-            href="/assets/cv/filat-astakhov-cv.pdf"
-            download
-            className="ds-about-cv-link"
-            {...(reduced ? {} : {
-              initial: { opacity: 0 },
-              animate: { opacity: 1 },
-              transition: { duration: 0.5, delay: 0.35, ease: EASE },
-            })}
-          >
-            <span aria-hidden="true">↓</span> Скачать резюме
-          </motion.a>
-
           <motion.div className="ds-about-stats" {...(reduced ? {} : {
             initial: { opacity: 0 },
             animate: { opacity: 1 },
-            transition: { duration: 0.5, delay: 0.45, ease: EASE },
+            transition: { duration: 0.5, delay: 0.35, ease: EASE },
           })}>
             {stats.map((s) => (
               <div key={s.label}>
@@ -163,16 +135,48 @@ export function AboutPageContent({ tags, stats }: Props) {
               </div>
             ))}
           </motion.div>
+
+          <motion.div className="ds-about-center-skills" {...(reduced ? {} : {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            transition: { duration: 0.5, delay: 0.45, ease: EASE },
+          })}>
+            <div className="ds-about-section-label">Ключевые навыки</div>
+            <div className="ds-about-skills">
+              {tags.map((tag) => (
+                <Link
+                  key={tag.id}
+                  href={`/projects?tag=${encodeURIComponent(tag.name)}`}
+                  className="ds-tag"
+                >
+                  {tag.name}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </motion.aside>
 
-      {/* ── Right: career timeline (vertically centered) ── */}
+      {/* ── Right: career timeline + CV ── */}
       <section className="ds-about-right">
         <motion.div className="ds-about-section-label" {...fadeUp(0.1)}>
           Карьера
         </motion.div>
 
         <CareerTimeline reduced={reduced} />
+
+        <motion.a
+          href="/assets/cv/filat-astakhov-cv.pdf"
+          download
+          className="ds-about-cv-link"
+          {...(reduced ? {} : {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            transition: { duration: 0.5, delay: 0.35, ease: EASE },
+          })}
+        >
+          <span aria-hidden="true">↓</span> Скачать резюме
+        </motion.a>
       </section>
     </main>
   );
