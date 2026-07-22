@@ -204,7 +204,6 @@ img { max-width: 100%; display: block; }
   gap: 5px;
   cursor: pointer;
   padding: 0.75rem;
-  margin-right: -0.5rem;
   min-width: 44px;
   min-height: 44px;
   background: none;
@@ -1495,8 +1494,8 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 }
 
 .ds-project-hero-title {
-  font-family: var(--font-unbounded, 'Impact', sans-serif);
-  font-weight: 900;
+  font-family: var(--font-widock, sans-serif);
+  font-weight: 700;
   font-size: clamp(4rem, 12vw, 14rem);
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -1556,8 +1555,8 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   position: absolute;
   right: calc(var(--ds-px) * -0.15);
   bottom: -3rem;
-  font-family: var(--font-unbounded, 'Impact', sans-serif);
-  font-weight: 900;
+  font-family: var(--font-widock, sans-serif);
+  font-weight: 700;
   font-size: clamp(14rem, 30vw, 42rem);
   line-height: 1;
   color: transparent;
