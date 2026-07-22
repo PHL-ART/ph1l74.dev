@@ -46,7 +46,7 @@ export const Header: FC = () => {
         />
       </button>
 
-      <nav>
+      <nav className="ds-site-header-nav">
         <ul className={`ds-site-nav${mobileOpen ? ' ds-mobile-open' : ''}`}>
           {navLinks.map((link) => (
             <li key={link.href}>

@@ -204,6 +204,7 @@ img { max-width: 100%; display: block; }
   gap: 5px;
   cursor: pointer;
   padding: 0.75rem;
+  margin-right: -0.75rem;
   min-width: 44px;
   min-height: 44px;
   background: none;
@@ -501,6 +502,8 @@ img { max-width: 100%; display: block; }
 @media (max-width: 560px) {
   .ds-nav-hamburger { display: flex; }
 
+  .ds-site-header-nav { display: contents; }
+
   .ds-site-nav {
     position: fixed;
     top: var(--ds-header-h);
@@ -508,7 +511,7 @@ img { max-width: 100%; display: block; }
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    padding: 0.5rem var(--ds-px) 2rem;
+    padding: 0;
     background: oklch(5.5% 0.006 27 / 0.98);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
@@ -532,7 +535,7 @@ img { max-width: 100%; display: block; }
   .ds-site-nav a {
     font-size: 0.68rem;
     letter-spacing: 0.22em;
-    padding: 1.1rem 0;
+    padding: 1.1rem var(--ds-px);
     width: 100%;
     justify-content: space-between;
   }
@@ -1188,8 +1191,8 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   max-width: 58ch;
   margin-top: 0.6rem;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1214,8 +1217,13 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   .ds-page-header         { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 2.5rem 0 1.75rem; }
   .ds-page-title          { font-size: clamp(2.2rem, 9.5vw, 4rem); }
   .ds-page-header-meta    { text-align: left; font-size: 0.52rem; line-height: 1.8; }
-  .ds-project-item        { padding: 1.75rem 0; }
-  .ds-project-title       { font-size: clamp(1.35rem, 5.5vw, 2rem); }
+  .ds-project-item        { padding: 1.75rem 0; grid-template-columns: 1fr; }
+  .ds-project-num         { display: none; }
+  .ds-project-year        { grid-column: 1; grid-row: 2; }
+  .ds-project-desc-cell   { grid-column: 1; grid-row: 3; }
+  .ds-project-tags-cell   { grid-column: 1; grid-row: 4; }
+  .ds-project-main        { grid-column: 1; grid-row: 1; }
+  .ds-project-title       { font-size: clamp(1.35rem, 5.5vw, 2rem); display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 }
 
 /* в”Ђв”Ђв”Ђ Contacts Page в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
@@ -1504,16 +1512,18 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
   margin-bottom: 2.5rem;
   max-width: 16ch;
   word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .ds-project-hero-title--md {
   font-size: clamp(2.8rem, 6vw, 7rem);
-  max-width: none;
+  max-width: 100%;
 }
 
 .ds-project-hero-title--lg {
   font-size: clamp(1.8rem, 4vw, 5rem);
-  max-width: none;
+  max-width: 100%;
 }
 
 .ds-project-hero-desc {
@@ -1750,6 +1760,8 @@ li:has(.ds-project-item-link):hover .ds-project-arrow {
 
 @media (max-width: 480px) {
   .ds-project-hero-title { font-size: clamp(2.75rem, 14vw, 5rem); }
+  .ds-project-hero-title--md { font-size: clamp(1.6rem, 7vw, 2.8rem); }
+  .ds-project-hero-title--lg { font-size: clamp(1.2rem, 5.5vw, 2rem); }
   .ds-project-desc-col { padding-top: 3rem; padding-bottom: 3rem; }
 }
 
